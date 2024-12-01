@@ -118,7 +118,7 @@ doughdoughs-pizza/
 ├── hooks/
 │ └── useCart.ts # Cart state management
 ├── data/
-│ ├── pizzas.ts # Pizza data and types
+│ ├��─ pizzas.ts # Pizza data and types
 │ └── ingredients.ts # Ingredients data
 └── utils/
 ├── images.ts # Image handling utilities
@@ -225,5 +225,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Price calculation utilities
 
 ---
+
+## Live Demo & Repository
+
+🌐 **Live Site**: [DoughDough App](https://doughdough-antoinegaton-code-monkey-studios.vercel.app/?_vercel_share=IX498wxRPuoRktP3GCz7ntVNInsHRTeL)
+
+📁 **GitHub Repository**: [github.com/AntoineGaton/doughdough](https://github.com/AntoineGaton/doughdough)
 
 **Note**: This project is actively being developed with new features being added regularly.
