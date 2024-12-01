@@ -1,0 +1,67 @@
+/* eslint-disable-next-line */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --background: 60 33% 97%;  /* #fbfaf3 */
+  --foreground: 0 0% 3.9%;
+  --card: 60 33% 97%;
+  --card-foreground: 0 0% 3.9%;
+  --popover: 60 33% 97%;
+  --popover-foreground: 0 0% 3.9%;
+  --primary: 60 33% 97%;     /* #fbfaf3 */
+  --primary-foreground: 0 0% 9%;
+  --secondary: 8 75% 44%;    /* #c4391c */
+  --secondary-foreground: 0 0% 98%;
+  --muted: 60 33% 90%;
+  --muted-foreground: 0 0% 45.1%;
+  --accent: 8 75% 44%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 60 33% 85%;
+  --input: 60 33% 85%;
+  --ring: 8 75% 44%;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 72% 51%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-[hsl(var(--border))];
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
