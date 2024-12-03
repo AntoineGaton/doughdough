@@ -65,3 +65,16 @@
 .hover-scale {
   @apply transition-transform duration-200 hover:scale-105;
 }
+
+@keyframes rainbow {
+  0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+  20% { box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
+  40% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); }
+  60% { box-shadow: 0 0 20px rgba(0, 128, 0, 0.5); }
+  80% { box-shadow: 0 0 20px rgba(0, 0, 255, 0.5); }
+  100% { box-shadow: 0 0 20px rgba(238, 130, 238, 0.5); }
+}
+
+.animate-rainbow {
+  animation: rainbow 2s linear infinite;
+}

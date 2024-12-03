@@ -19,7 +19,7 @@ export function PopularPizzas() {
 
   return (
     <section className="py-12">
-      <div className="border-t-2 border-b-2 border-red-600 py-8 my-8">
+      <div className="border-t-2 border-b-2 border-red-600 py-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-4xl font-bold text-gray-900">Popular Pizzas</h2>
           <Link 
@@ -29,7 +29,7 @@ export function PopularPizzas() {
             PIZZA MENU <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {pizzas.map((pizza) => (
             <Link
               key={pizza.id}

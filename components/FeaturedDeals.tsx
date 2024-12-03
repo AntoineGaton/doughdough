@@ -40,7 +40,7 @@ export function FeaturedDeals() {
           SEE MORE <ArrowRight className="ml-1 h-4 w-4" />
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {deals.map((deal) => (
           <Link 
             key={deal.id} 

@@ -12,24 +12,34 @@ export function HeroSection() {
   };
 
   return (
-    <div className="relative w-screen h-[calc(100vh-80px)]">
-      <div className="absolute inset-0 border-t-2 border-b-2 border-secondary">
+    <div className="relative w-full h-[100vh] overflow-hidden">
+      <div className="absolute inset-0 mt-[65px] sm:mt-[81px]">
         <video
           autoPlay
           loop
           muted
           playsInline
           className="w-full h-full object-cover
-            sm:object-[center_center] md:object-[center_center] lg:object-cover
-            sm:scale-[1.5] md:scale-[1.2] lg:scale-100"
+            xs:object-[center_center] xs:scale-[1.8]
+            sm:object-[center_center] sm:scale-[1.5] 
+            md:object-[center_center] md:scale-[1.2] 
+            lg:object-cover lg:scale-100"
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+
+      {/* Featured Content */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 mt-[65px] sm:mt-[81px]">
+        <div className="text-center text-white">
+          {/* Add your featured content here */}
+        </div>
       </div>
 
       {/* Bouncing Chevron */}
       <div 
-        className="flex flex-col items-center absolute bottom-3 left-1/2 -translate-x-1/2 text-center cursor-pointer drop-shadow-lg"
+        className="flex flex-col items-center absolute bottom-3 left-1/2 -translate-x-1/2 text-center cursor-pointer z-20"
         onClick={scrollToNext}
       >
         <motion.div
