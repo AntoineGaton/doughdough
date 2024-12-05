@@ -2,6 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Oswald } from 'next/font/google';
 import { NavBar } from '@/components/NavBar';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 const oswald = Oswald({ 
   subsets: ['latin'],
@@ -21,8 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${oswald.className} overflow-x-hidden`}>
-        <NavBar />
-        <main className="min-h-screen bg-gray-50">{children}</main>
+        <AuthProvider>
+          <NavBar />
+          <main className="min-h-screen bg-gray-50">{children}</main>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

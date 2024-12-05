@@ -78,3 +78,17 @@
 .animate-rainbow {
   animation: rainbow 2s linear infinite;
 }
+
+.select-trigger[data-placeholder] {
+  color: black;
+}
+
+.select-content {
+  color: black;
+  background-color: white;
+}
+
+[data-radix-select-trigger] {
+  color: black !important;
+  background-color: white;
+}

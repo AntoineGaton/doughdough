@@ -22,7 +22,7 @@ export default function MobilePizzaTracker() {
   useEffect(() => {
     if (!status.isDelivered) {
       const stageTimer = setInterval(() => {
-        setStage((prev) => (prev < STAGES.length - 1 ? prev + 1 : 0))
+        setStage(status.currentStage < STAGES.length - 1 ? status.currentStage + 1 : 0)
       }, 10000)
       return () => clearInterval(stageTimer)
     }

@@ -11,6 +11,9 @@ import { useCart } from "@/hooks/useCart";
 import PizzaTracker from "./PizzaTracker";
 import Image from "next/image";
 import MobilePizzaTracker from "./MobilePizzaTracker";
+import { AuthModal } from "./auth/AuthModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "./ui/button";
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +21,8 @@ export function NavBar() {
   const [activeView, setActiveView] = useState<string | null>(null);
   const { itemCount } = useCart();
   const pathname = usePathname();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   const baseMenuItems = [
     { id: "deals", label: "Deals", icon: <Tag className="h-5 w-5" />, href: "/deals" },
@@ -89,12 +94,17 @@ export function NavBar() {
 
           {/* Right - User & Cart - Fixed width */}
           <div className="w-[100px] sm:w-[120px] flex justify-end items-center">
-            <button 
-              className="bg-primary h-[65px] sm:h-[81px] px-2 sm:px-4 text-secondary hover:text-black flex items-center"
-              aria-label="User account"
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setIsAuthModalOpen(true)}
+              className="relative"
             >
-              <User className="h-6 w-6 sm:h-8 sm:w-8" />
-            </button>
+              <User className="h-5 w-5" />
+              {isAdmin && (
+                <span className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full" />
+              )}
+            </Button>
             <div className="text-secondary mx-1 sm:mx-2">|</div>
             <button
               onClick={() => setIsCartOpen(true)}
@@ -188,6 +198,11 @@ export function NavBar() {
 
       {/* Cart Drawer */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </nav>
   );
 }

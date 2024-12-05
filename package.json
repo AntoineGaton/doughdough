@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed-db": "ts-node -r tsconfig-paths/register --project tsconfig.seed.json utils/firebase-admin-seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -37,6 +38,7 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@stripe/stripe-js": "^5.2.0",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "canvas-confetti": "^1.9.3",
@@ -44,16 +46,20 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.5.1",
+    "firebase": "^11.0.2",
+    "firebase-admin": "^13.0.1",
     "framer-motion": "^11.11.17",
     "input-otp": "^1.4.1",
     "lucide-react": "^0.446.0",
-    "next": "13.5.1",
+    "next": "^13.5.1",
     "next-themes": "^0.3.0",
     "react": "18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.1",
     "react-resizable-panels": "^2.1.7",
     "sonner": "^1.7.0",
+    "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
@@ -62,10 +68,13 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^22.9.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "postcss-preset-env": "^9.1.0",
-    "tailwindcss": "^3.4.15"
+    "tailwindcss": "^3.4.15",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0"
   }
 }

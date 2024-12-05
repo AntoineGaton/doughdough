@@ -51,7 +51,7 @@ export const pizzas: Pizza[] = [
     id: 2,
     name: "Margherita",
     description: "Fresh mozzarella, tomatoes, basil on our signature sauce",
-    image: getPizzaImage("margherita pizza"),
+    image: "https://firebasestorage.googleapis.com/v0/b/your-bucket/pizzas/margherita.jpg",
     price: "16.99",
     ingredients: ['mozzarella', 'tomatoes', 'basil', 'tomato-sauce'],
     isPopular: false
