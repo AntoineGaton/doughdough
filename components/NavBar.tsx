@@ -114,7 +114,7 @@ export function NavBar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsCartOpen(true)}
-              className="relative bg-primary h-[65px] sm:h-[81px] text-secondary hover:text-black flex items-center p-0"
+              className="relative bg-primary h-[65px] sm:h-[81px] text-secondary hover:text-black hover:bg-transparent p-0"
               aria-label="Shopping cart"
             >
               <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8" />
