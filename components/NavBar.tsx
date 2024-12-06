@@ -96,36 +96,40 @@ export function NavBar() {
           <div className="w-[100px] sm:w-[120px] flex justify-end items-center">
             <Button 
               variant="ghost" 
+              className="relative bg-primary h-[65px] sm:h-[81px] text-secondary hover:text-black hover:bg-transparent p-0"
               size="icon"
               onClick={() => setIsAuthModalOpen(true)}
-              className="relative"
             >
-              <User className="h-5 w-5" />
+              <User className="h-6 w-6 sm:h-8 sm:w-8" />
               {isAdmin && (
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full" />
+                <span 
+                  style={{
+                    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+                  }} 
+                />
               )}
             </Button>
             <div className="text-secondary mx-1 sm:mx-2">|</div>
-            <button
+            <Button
               onClick={() => setIsCartOpen(true)}
-              className="relative bg-primary h-[65px] sm:h-[81px] px-2 sm:px-4 text-secondary hover:text-black flex items-center"
+              className="relative bg-primary h-[65px] sm:h-[81px] px-2 sm:px-4 text-secondary hover:text-black px-0"
               aria-label="Shopping cart"
             >
-              <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8" />
+              <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8 p-0" />
               {itemCount > 0 && (
                 <span className="absolute top-2 sm:top-4 right-1 sm:right-3 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs sm:text-sm">
                   {itemCount}
                 </span>
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
       <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <DrawerContent className="fixed inset-x-0 top-[65px] sm:top-[81px] min-w-[320px]">
-          <div className="bg-primary max-h-[85vh] sm:max-h-[85vh] overflow-y-auto">
+        <DrawerContent className="fixed inset-x-0 top-[65px] sm:top-[600px] min-w-[320px]">
+          <div className="bg-primary max-h-600px sm:max-h-300px overflow-y-auto">
             <AnimatePresence mode="wait">
               {!activeView ? (
                 <motion.div
