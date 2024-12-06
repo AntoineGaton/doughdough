@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed-db": "ts-node -r tsconfig-paths/register --project tsconfig.seed.json utils/firebase-admin-seed.ts"
+    "seed-db": "ts-node -r tsconfig-paths/register --project tsconfig.seed.json utils/firebase-admin-seed.ts",
+    "seed-deals": "ts-node --project tsconfig.seed.json utils/seed-deals.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

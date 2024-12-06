@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { pizzas } from '@/data/pizzas';
 import { ingredients } from '@/data/ingredients';
+import { deals } from '@/data/deals';
 
 // Import the service account JSON directly
 import serviceAccount from '../doughdough-cc6c5-firebase-adminsdk-1vl7k-e228428bda.json';
@@ -42,33 +43,18 @@ async function seedDatabase() {
     await ingredientBatch.commit();
     console.log('Ingredients seeded successfully');
 
+    // Seed deals
+    const dealsBatch = db.batch();
+    deals.forEach((deal) => {
+      const docRef = db.collection('deals').doc(deal.id);
+      dealsBatch.set(docRef, deal);
+    });
+    await dealsBatch.commit();
+    console.log('Deals seeded successfully');
+
   } catch (error) {
     console.error('Error seeding database:', error);
   }
 }
 
-async function createAdminUser() {
-  const adminEmail = 'admin@doughdough.com'; // Replace with your email
-  const adminPassword = 'rootroot'; // Add a temporary password
-  
-  try {
-    // Create a new admin user
-    const userRecord = await admin.auth().createUser({
-      email: adminEmail,
-      password: adminPassword,
-      displayName: 'Admin User',
-      emailVerified: true
-    });
-    console.log('Successfully created new user:', userRecord.uid);
-
-    // Set custom claims for the admin user
-    await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
-    console.log('Successfully set custom claims for user:', userRecord.uid);
-    
-  } catch (error) {
-    console.error('Error creating admin user:', error);
-  }
-}
-
 seedDatabase();
-createAdminUser();
