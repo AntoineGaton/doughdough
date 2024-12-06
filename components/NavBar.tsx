@@ -19,10 +19,25 @@ export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeView, setActiveView] = useState<string | null>(null);
+  const [rgbValues, setRgbValues] = useState({ r: 0, g: 0, b: 0 });
   const { itemCount } = useCart();
   const pathname = usePathname();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, isAdmin } = useAuth();
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const interval = setInterval(() => {
+      setRgbValues({
+        r: Math.sin(Date.now() * 0.002) * 127 + 128,
+        g: Math.sin(Date.now() * 0.002 + 2) * 127 + 128,
+        b: Math.sin(Date.now() * 0.002 + 4) * 127 + 128
+      });
+    }, 16); // ~60fps
+
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   const baseMenuItems = [
     { id: "deals", label: "Deals", icon: <Tag className="h-5 w-5" />, href: "/deals" },
@@ -100,14 +115,12 @@ export function NavBar() {
               size="icon"
               onClick={() => setIsAuthModalOpen(true)}
             >
-              <User className="h-6 w-6 sm:h-8 sm:w-8" />
-              {isAdmin && (
-                <span 
-                  style={{
-                    background: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
-                  }} 
-                />
-              )}
+              <User 
+                className="h-6 w-6 sm:h-8 sm:w-8" 
+                style={isAdmin ? {
+                  color: `rgb(${rgbValues.r}, ${rgbValues.g}, ${rgbValues.b})`
+                } : undefined}
+              />
             </Button>
             <div className="text-secondary mx-1 sm:mx-2">|</div>
             <Button
