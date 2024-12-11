@@ -1,5 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerFooter } from "@/components/ui/drawer";
 import { useCart } from "@/hooks/useCart";
+import { VisuallyHidden } from "../components/ui/visually-hidden";
 import Image from "next/image";
 import { X } from "lucide-react";
 
@@ -17,10 +18,17 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         <div className="bg-primary max-h-[85vh] overflow-y-auto">
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Your order</h2>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
-                <X className="h-6 w-6" />
-              </button>
+              <div className="flex items-center justify-between w-full">
+                <VisuallyHidden>Shopping Cart</VisuallyHidden>
+                <h2 className="text-2xl font-bold">Your order</h2>
+                <button 
+                  onClick={onClose} 
+                  className="text-gray-400 hover:text-gray-500"
+                  aria-label="Close cart"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
             </DrawerHeader>
 
             {itemCount === 0 ? (

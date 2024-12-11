@@ -66,13 +66,13 @@ export function NavBar() {
     } else if (item.id === "deals") {
       setIsDealsModalOpen(true);
       setIsMenuOpen(false);
-    } else if (item.id === "menu") {
+    } else if (item.id === "menu" || item.href === "/menu") {
       setIsMenuModalOpen(true);
       setIsMenuOpen(false);
     } else if (item.id === "contact") {
       setIsContactModalOpen(true);
       setIsMenuOpen(false);
-    } else if (item.href) {
+    } else if (item.href && item.href !== "/menu") {
       window.location.href = item.href;
       setIsMenuOpen(false);
     }
@@ -112,7 +112,7 @@ export function NavBar() {
           <div className="absolute left-1/2 -translate-x-1/2">
             <Link href="/" className="block">
               <Image 
-                src="/logo.png" 
+                src="/images/logo.png" 
                 alt="DoughDough's Logo" 
                 width={80} 
                 height={80}

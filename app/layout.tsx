@@ -21,8 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${oswald.className} overflow-x-hidden`}>
+    <html lang="en" suppressHydrationWarning>
+      <body 
+        className={`${oswald.className} overflow-x-hidden`}
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <NavBar />
           <main className="min-h-screen bg-gray-50">{children}</main>

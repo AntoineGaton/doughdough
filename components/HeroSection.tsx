@@ -4,7 +4,7 @@ import { MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function HeroSection() {
-  const heroVideo = "/hero-video.mp4";
+  const heroVideo = "videos/hero-video.mp4";
 
   const scrollToNext = () => {
     const nextSection = document.getElementById('featured-section');

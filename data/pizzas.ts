@@ -17,7 +17,7 @@ export async function initializePizzas() {
 }
 
 export type Pizza = {
-  id: number;
+  id: string;
   name: string;
   description: string;
   image?: string;
@@ -29,7 +29,7 @@ export type Pizza = {
 
 export const pizzas: Pizza[] = [
   {
-    id: 0,
+    id: "0",
     name: "BBQ Chicken",
     description: "Grilled chicken, bacon, onions with sweet BBQ sauce",
     price: "17.99",
@@ -37,7 +37,7 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 1,
+    id: "1",
     name: "Buffalo Chicken",
     description: "Spicy buffalo chicken, ranch, mozzarella, red onions",
     price: "18.99",
@@ -45,7 +45,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 2,
+    id: "2",
     name: "Cheese Pizza",
     description: "A classic cheese pizza with a thin crust",
     price: "10.99",
@@ -54,16 +54,16 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 3,
+    id: "3",
     name: "Custom",
     description: "Create your own perfect pizza",
     price: "10.99",
     ingredients: [],
     isCustom: true,
-    isPopular: false
+    isPopular: true
   },
   {
-    id: 4,
+    id: "4",
     name: "Four Cheese",
     description: "Mozzarella, parmesan, gorgonzola, and ricotta cheese blend",
     price: "17.99",
@@ -71,7 +71,7 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 5,
+    id: "5",
     name: "Hawaiian",
     description: "Ham, pineapple, extra mozzarella on our signature sauce",
     price: "17.99",
@@ -79,7 +79,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 6,
+    id: "6",
     name: "Margherita",
     description: "Fresh mozzarella, tomatoes, basil on our signature sauce",
     price: "16.99",
@@ -87,7 +87,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 7,
+    id: "7",
     name: "Meat Lovers",
     description: "Pepperoni, sausage, ham, bacon, seasoned pork, beef",
     price: "19.99",
@@ -95,7 +95,7 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 8,
+    id: "8",
     name: "Mediterranean",
     description: "Feta, olives, sun-dried tomatoes, spinach, garlic",
     price: "18.99",
@@ -103,7 +103,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 9,
+    id: "9",
     name: "Pepperoni Perfection",
     description: "Double pepperoni, extra cheese, Italian seasoning",
     price: "17.99",
@@ -111,7 +111,7 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 10,
+    id: "10",
     name: "Spicy Italian",
     description: "Spicy Italian sausage, pepperoni, hot peppers, and garlic",
     price: "18.99",
@@ -119,7 +119,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 11,
+    id: "11",
     name: "Supreme",
     description: "Pepperoni, Italian sausage, mushrooms, onions, green peppers",
     price: "18.99",
@@ -127,7 +127,7 @@ export const pizzas: Pizza[] = [
     isPopular: true
   },
   {
-    id: 12,
+    id: "12",
     name: "Truffle Mushroom",
     description: "Truffle oil, assorted mushrooms, garlic, and fresh herbs",
     price: "19.99",
@@ -135,7 +135,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 13,
+    id: "13",
     name: "Veggie Delight",
     description: "Mushrooms, onions, peppers, olives, tomatoes, spinach",
     price: "16.99",
@@ -143,7 +143,7 @@ export const pizzas: Pizza[] = [
     isPopular: false
   },
   {
-    id: 14,
+    id: "14",
     name: "White Pizza",
     description: "Olive oil base, roasted garlic, ricotta, and mozzarella",
     price: "16.99",

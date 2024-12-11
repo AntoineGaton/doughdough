@@ -16,7 +16,7 @@ export default function NotFound() {
           className="relative w-48 h-48"
         >
           <Image
-            src="/404.png"
+            src="/images/404.png"
             alt="DoughDoughs Pizza"
             fill
             className="object-contain"

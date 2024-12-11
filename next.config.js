@@ -10,6 +10,10 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
+    domains: [
+      'storage.googleapis.com',
+      'firebasestorage.googleapis.com'
+    ]
   },
 };
 
