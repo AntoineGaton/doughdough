@@ -9,5 +9,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["utils/**/*"]
+  "include": ["utils/**/*"],
+  "exclude": ["node_modules"]
 } 

@@ -14,6 +14,9 @@ import MobilePizzaTracker from "./MobilePizzaTracker";
 import { AuthModal } from "./auth/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "./ui/button";
+import { DealsModal } from "./modals/DealsModal";
+import { MenuModal } from "./modals/MenuModal";
+import { ContactModal } from "./modals/ContactModal";
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,6 +27,9 @@ export function NavBar() {
   const pathname = usePathname();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, isAdmin } = useAuth();
+  const [isDealsModalOpen, setIsDealsModalOpen] = useState(false);
+  const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -40,11 +46,11 @@ export function NavBar() {
   }, [isAdmin]);
 
   const baseMenuItems = [
-    { id: "deals", label: "Deals", icon: <Tag className="h-5 w-5" />, href: "/deals" },
-    { id: "menu", label: "Menu", icon: <Pizza className="h-5 w-5" />, href: "/menu" },
+    { id: "deals", label: "Deals", icon: <Tag className="h-5 w-5" /> },
+    { id: "menu", label: "Menu", icon: <Pizza className="h-5 w-5" /> },
     { id: "track", label: "Track Order", icon: <Clock className="h-5 w-5" /> },
     { id: "about", label: "About Us", icon: <Users className="h-5 w-5" />, href: "/about" },
-    { id: "contact", label: "Contact", icon: <MessageSquare className="h-5 w-5" />, href: "/contact" },
+    { id: "contact", label: "Contact", icon: <MessageSquare className="h-5 w-5" /> },
   ];
 
   const menuItems = pathname === "/" 
@@ -57,6 +63,15 @@ export function NavBar() {
   const handleMenuItemClick = (item: typeof menuItems[0]) => {
     if (item.id === "track") {
       setActiveView("track");
+    } else if (item.id === "deals") {
+      setIsDealsModalOpen(true);
+      setIsMenuOpen(false);
+    } else if (item.id === "menu") {
+      setIsMenuModalOpen(true);
+      setIsMenuOpen(false);
+    } else if (item.id === "contact") {
+      setIsContactModalOpen(true);
+      setIsMenuOpen(false);
     } else if (item.href) {
       window.location.href = item.href;
       setIsMenuOpen(false);
@@ -221,6 +236,18 @@ export function NavBar() {
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
+      />
+
+      <DealsModal isOpen={isDealsModalOpen} onClose={() => setIsDealsModalOpen(false)} />
+
+      <MenuModal 
+        isOpen={isMenuModalOpen} 
+        onClose={() => setIsMenuModalOpen(false)} 
+      />
+
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
       />
     </nav>
   );

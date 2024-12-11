@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed-db": "ts-node -r tsconfig-paths/register --project tsconfig.seed.json utils/firebase-admin-seed.ts",
-    "seed-deals": "ts-node --project tsconfig.seed.json utils/seed-deals.ts"
+    "seed-deals": "ts-node --project tsconfig.seed.json utils/seed-deals.ts",
+    "update-images": "ts-node --project tsconfig.seed.json utils/update-pizza-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -70,7 +71,7 @@
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
-    "@types/node": "^22.9.3",
+    "@types/node": "^22.10.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "postcss-preset-env": "^9.1.0",
