@@ -10,7 +10,7 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, itemCount } = useCart();
+  const { items, itemCount, removeItem } = useCart();
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
@@ -19,8 +19,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader className="flex items-center justify-between">
               <div className="flex items-center justify-between w-full">
-                <VisuallyHidden>Shopping Cart</VisuallyHidden>
-                <h2 className="text-2xl font-bold">Your order</h2>
+                <div className="w-6" />
+                <div>
+                  <VisuallyHidden>Shopping Cart</VisuallyHidden>
+                  <h2 className="text-2xl font-bold">Your order</h2>
+                </div>
                 <button 
                   onClick={onClose} 
                   className="text-gray-400 hover:text-gray-500"
@@ -32,13 +35,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </DrawerHeader>
 
             {itemCount === 0 ? (
-              <div className="p-6 text-center">
-                <div className="flex justify-center mb-4">
+              <div className="text-center">
+                <div className="flex justify-center mb-1">
                   <Image
-                    src="/logo.png"
+                    src="/images/logo2.png"
                     alt="Pizza Logo"
-                    width={120}
-                    height={120}
+                    width={300}
+                    height={300}
                     className="opacity-50"
                   />
                 </div>
@@ -53,7 +56,15 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <h3 className="font-medium">{item.name}</h3>
                       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                     </div>
-                    <p className="font-medium">${item.price}</p>
+                    <div className="flex flex-col items-end gap-2">
+                      <p className="font-medium">${item.price}</p>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="text-red-500 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

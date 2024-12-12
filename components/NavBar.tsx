@@ -109,14 +109,14 @@ export function NavBar() {
           </div>
 
           {/* Center - Logo - Fixed width */}
-          <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="absolute left-1/2 -translate-x-1/2 py-2 sm:py-3">
             <Link href="/" className="block">
               <Image 
                 src="/images/logo.png" 
                 alt="DoughDough's Logo" 
-                width={80} 
-                height={80}
-                className="w-[50px] h-[50px] sm:w-20 sm:h-20 object-contain" 
+                width={250} 
+                height={250}
+                className="w-[50px] h-[50px] sm:w-20 sm:h-20 object-contain"
                 priority
               />
             </Link>

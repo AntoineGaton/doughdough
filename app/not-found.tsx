@@ -7,13 +7,13 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 mt-24">
       <div className="text-center flex flex-col items-center z-0">
         <motion.div
           initial={{ scale: 10, opacity: 0 }}
           animate={{ scale: 3, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative w-48 h-48"
+          className="relative w-48 h-48 z-10"
         >
           <Image
             src="/images/404.png"
@@ -27,7 +27,7 @@ export default function NotFound() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.4 }}
-          className="mt-20 space-y-4 z-10"
+          className="mt-32 space-y-4"
         >
           <motion.h1 
             className="text-2xl font-bold text-muted-foreground"
