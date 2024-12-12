@@ -189,7 +189,7 @@ async function uploadSidesToFirestore() {
 
     // Add sides with images
     for (const side of sides) {
-      const imageUrl = await getSideImageUrl(side.image.replace('sides/', ''));
+      const imageUrl = await getSideImageUrl(side.image?.replace('sides/', '') || '');
       await db.collection('sides').add({
         ...side,
         image: imageUrl,

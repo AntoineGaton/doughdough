@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Drink } from "../../data/drinks";
+import { Side } from "../../data/sides";
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -20,58 +22,64 @@ interface MenuModalProps {
 
 export function MenuModal({ isOpen, onClose }: MenuModalProps) {
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [drinks, setDrinks] = useState<Drink[]>([]);
+  const [sides, setSides] = useState<Side[]>([]);
+  const [loading, setLoading] = useState({
+    pizzas: false,
+    drinks: false,
+    sides: false
+  });
   const { addToCart } = useCart();
 
-  useEffect(() => {
-    const fetchPizzas = async () => {
-      if (!isOpen) return;
+  const fetchItems = async (collectionName: 'pizzas' | 'drinks' | 'sides') => {
+    if (!isOpen) return;
+    
+    setLoading(prev => ({ ...prev, [collectionName]: true }));
+    try {
+      const itemsCollection = collection(db, collectionName);
+      const itemsQuery = query(itemsCollection, orderBy('name'));
       
-      setLoading(true);
-      try {
-        const pizzasCollection = collection(db, 'pizzas');
-        const pizzasQuery = query(pizzasCollection, orderBy('name'));
-        const pizzasSnapshot = await getDocs(pizzasQuery);
-        
-        const pizzasData = await Promise.all(
-          pizzasSnapshot.docs.map(async (doc) => {
-            const data = doc.data();
-            if (data.image) {
-              return {
-                ...data,
-                id: doc.id,
-              } as Pizza;
-            }
+      console.log(`Attempting to fetch ${collectionName}`);
+      
+      const itemsSnapshot = await getDocs(itemsQuery);
+      
+      console.log(`${collectionName} snapshot:`, itemsSnapshot.docs);
+      
+      const itemsData = await Promise.all(
+        itemsSnapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          console.log(`${collectionName} item data:`, data);
+          
+          return {
+            ...data,
+            id: doc.id,
+          };
+        })
+      );
 
-            const imageRef = ref(storage, `pizzas/${doc.id}.jpg`);
-            try {
-              const imageUrl = await getDownloadURL(imageRef);
-              return {
-                ...data,
-                id: doc.id,
-                image: imageUrl
-              } as Pizza;
-            } catch (error) {
-              console.error(`Error loading image for ${doc.id}:`, error);
-              return {
-                ...data,
-                id: doc.id,
-                image: '/fallback-pizza.jpg'
-              } as Pizza;
-            }
-          })
-        );
-        
-        setPizzas(pizzasData);
-      } catch (error) {
-        console.error('Error fetching pizzas:', error);
-        toast.error('Failed to load menu items');
-      } finally {
-        setLoading(false);
+      switch (collectionName) {
+        case 'pizzas':
+          setPizzas(itemsData as Pizza[]);
+          break;
+        case 'drinks':
+          setDrinks(itemsData as Drink[]);
+          break;
+        case 'sides':
+          setSides(itemsData as Side[]);
+          break;
       }
-    };
+    } catch (error) {
+      console.error(`Error fetching ${collectionName}:`, error);
+      toast.error(`Failed to load ${collectionName}`);
+    } finally {
+      setLoading(prev => ({ ...prev, [collectionName]: false }));
+    }
+  };
 
-    fetchPizzas();
+  useEffect(() => {
+    fetchItems('pizzas');
+    fetchItems('drinks');
+    fetchItems('sides');
   }, [isOpen]);
 
   return (
@@ -87,7 +95,7 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
             <TabsTrigger value="drinks">Drinks</TabsTrigger>
           </TabsList>
           <TabsContent value="pizzas">
-            {loading ? (
+            {loading.pizzas ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-secondary" />
               </div>
@@ -128,14 +136,86 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
             )}
           </TabsContent>
           <TabsContent value="sides">
-            <div className="text-center py-8 text-gray-500">
-              Coming Soon
-            </div>
+            {loading.sides ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-secondary" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                {sides.map((side) => (
+                  <Card key={side.id} className="overflow-hidden">
+                    <div className="relative h-48">
+                      <Image
+                        src={side.image?.toString() || '/fallback-side.jpg'}
+                        alt={side.name}
+                        fill
+                        className="object-cover"
+                      />
+                      <Badge className="absolute top-4 right-4 bg-white text-primary">
+                        ${side.price}
+                      </Badge>
+                    </div>
+                    <CardHeader>
+                      <CardTitle>{side.name}</CardTitle>
+                      <CardDescription>{side.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button 
+                        onClick={() => {
+                          addToCart(side);
+                          toast.success(`Added ${side.name} to cart`);
+                          onClose();
+                        }}
+                        className="w-full"
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
           <TabsContent value="drinks">
-            <div className="text-center py-8 text-gray-500">
-              Coming Soon
-            </div>
+            {loading.drinks ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-secondary" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                {drinks.map((drink) => (
+                  <Card key={drink.id} className="overflow-hidden">
+                    <div className="relative h-48">
+                      <Image
+                        src={drink.image?.toString() || '/fallback-drink.jpg'}
+                        alt={drink.name}
+                        fill
+                        className="object-cover"
+                      />
+                      <Badge className="absolute top-4 right-4 bg-white text-primary">
+                        ${drink.price}
+                      </Badge>
+                    </div>
+                    <CardHeader>
+                      <CardTitle>{drink.name}</CardTitle>
+                      <CardDescription>{drink.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button 
+                        onClick={() => {
+                          addToCart(drink);
+                          toast.success(`Added ${drink.name} to cart`);
+                          onClose();
+                        }}
+                        className="w-full"
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </DialogContent>

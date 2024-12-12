@@ -1,21 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Pizza } from '@/data/pizzas';
+import { Drink } from '@/data/drinks';
+import { Side } from '@/data/sides';
 
 interface CartState {
   items: CartItem[];
   itemCount: number;
-  addToCart: (item: Pizza) => void;
+  addToCart: (item: CartItem) => void;
   removeItem: (itemId: string) => void;
   clearCart: () => void;
 }
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: string;
-  quantity: number;
-}
+type CartItem = Pizza | Drink | Side;
 
 export const useCart = create<CartState>()(
   persist(
@@ -29,7 +26,7 @@ export const useCart = create<CartState>()(
             return {
               ...state,
               items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                i.id === item.id ? { ...i, quantity: (i.quantity || 0) + 1 } : i
               ),
               itemCount: state.itemCount + 1,
             };
@@ -49,10 +46,10 @@ export const useCart = create<CartState>()(
             items: state.items
               .map((i) =>
                 i.id === itemId
-                  ? { ...i, quantity: i.quantity - 1 }
+                  ? { ...i, quantity: (i.quantity || 0) - 1 }
                   : i
               )
-              .filter((i) => i.quantity > 0),
+              .filter((i) => (i.quantity || 0) > 0),
             itemCount: state.itemCount - 1,
           };
         }),

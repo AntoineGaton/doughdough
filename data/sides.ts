@@ -1,10 +1,10 @@
-interface Side {
+export interface Side {
   id: string;
   name: string;
-  description: string;
-  image: string;
-  category: 'bread' | 'dessert' | 'wings';
   price: number;
+  description: string;
+  image?: string;
+  quantity?: number;
 }
 
 export const sides: Side[] = [
@@ -13,7 +13,6 @@ export const sides: Side[] = [
     name: 'Garlic Knots',
     description: 'Soft, buttery knots of bread topped with garlic, herbs, and parmesan cheese',
     image: 'sides/garlic-knots.jpg',
-    category: 'bread',
     price: 5.99
   },
   {
@@ -21,7 +20,6 @@ export const sides: Side[] = [
     name: 'Classic Wings',
     description: 'Crispy chicken wings tossed in your choice of sauce',
     image: 'sides/wings.jpg',
-    category: 'wings',
     price: 12.99
   },
   {
@@ -29,7 +27,6 @@ export const sides: Side[] = [
     name: 'Cannoli',
     description: 'Traditional Italian pastry filled with sweet ricotta cream',
     image: 'sides/cannoli.jpg',
-    category: 'dessert',
     price: 4.99
   },
   {
@@ -37,7 +34,6 @@ export const sides: Side[] = [
     name: 'Tiramisu',
     description: 'Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cream',
     image: 'sides/tiramisu.jpg',
-    category: 'dessert',
     price: 6.99
   },
   {
@@ -45,7 +41,6 @@ export const sides: Side[] = [
     name: 'New York Cheesecake',
     description: 'Rich and creamy New York style cheesecake',
     image: 'sides/cheesecake.jpg',
-    category: 'dessert',
     price: 6.99
   },
   {
@@ -53,7 +48,6 @@ export const sides: Side[] = [
     name: 'Sugar Puffs',
     description: 'Light and airy pastry puffs dusted with powdered sugar',
     image: 'sides/sugar-puffs.jpg',
-    category: 'dessert',
     price: 4.99
   },
   {
@@ -61,7 +55,6 @@ export const sides: Side[] = [
     name: 'Brookie',
     description: 'A delicious hybrid of brownies and cookies',
     image: 'sides/brookie.jpg',
-    category: 'dessert',
     price: 5.99
   }
 ];

@@ -1,13 +1,14 @@
-interface Drink {
+export interface Drink {
   id: string;
   name: string;
+  price: number;
   description: string;
-  image: string;
-  category: 'cocktail' | 'mocktail' | 'beer' | 'wine' | 'spirit' | 'soft-drink' | 'water';
-  price?: number;
+  image?: string;
+  size?: string;
+  quantity?: number;
 }
 
-export const drinks: Drink[] = [
+export const drinks = [
   {
     id: 'coke-20oz',
     name: 'Coca-Cola (20 oz)',
