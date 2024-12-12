@@ -4,7 +4,7 @@ import { ingredients } from '@/data/ingredients';
 import { deals } from '@/data/deals';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { drinks } from '../data/drinks';
-import { sides } from '../data/sides';
+import { sides } from '../data/sides'
 
 // Import the service account JSON directly
 import serviceAccount from '../doughdough-cc6c5-firebase-adminsdk-1vl7k-e228428bda.json';
