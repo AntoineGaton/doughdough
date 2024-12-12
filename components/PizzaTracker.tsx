@@ -4,6 +4,10 @@ import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import confetti from "canvas-confetti"
 import { useOrderTracking } from '@/hooks/useOrderTracking'
+import Image from "next/image"
+import { useAuth } from "@/contexts/AuthContext"
+import { db } from "@/lib/firebase"
+import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
 
 const stages = [
   { id: 1, name: "ORDER PLACED" },
@@ -22,30 +26,52 @@ const messages = {
 }
 
 export default function PizzaTracker() {
+  const { user } = useAuth()
   const { status, setStage } = useOrderTracking()
   const [isRainbow, setIsRainbow] = useState(false)
 
   useEffect(() => {
-    if (!status.isDelivered) {
+    if (status.currentStage > 0) {
       const timer = setInterval(() => {
-        setStage((status.currentStage + 1) % stages.length)
+        const nextStage = (status.currentStage + 1) % stages.length
+        setStage(nextStage)
+        
+        if (nextStage === stages.length - 1) {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          })
+          setIsRainbow(true)
+        }
       }, 10000)
       return () => clearInterval(timer)
     }
-  }, [status.currentStage, status.isDelivered, setStage])
+  }, [status.currentStage, setStage])
 
-  useEffect(() => {
-    if (status.isComplete) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-      setIsRainbow(true)
-    } else {
-      setIsRainbow(false)
-    }
-  }, [status.isComplete])
+  if (status.currentStage === 0) {
+    return (
+      <div className="w-full max-w-3xl mx-auto p-6 bg-secondary rounded-xl shadow-xl">
+        <div className="text-center">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/images/logo2.png"
+              alt="Pizzaria Logo"
+              width={200}
+              height={200}
+              className="opacity-80"
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-primary mb-2">
+            No Active Orders
+          </h2>
+          <p className="text-primary/80">
+            Place an order to start tracking your pizza&apos;s journey!
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={cn(

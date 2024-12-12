@@ -3,6 +3,7 @@ import { useCart } from "@/hooks/useCart";
 import { VisuallyHidden } from "../components/ui/visually-hidden";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { CheckoutButton } from "./CheckoutButton";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -11,6 +12,10 @@ interface CartDrawerProps {
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, itemCount, removeItem } = useCart();
+
+  const total = items.reduce((sum, item) => {
+    return sum + (item.price * (item.quantity || 1));
+  }, 0);
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
@@ -67,20 +72,16 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     </div>
                   </div>
                 ))}
+
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-bold text-lg">Total:</span>
+                    <span className="font-bold text-lg">${total.toFixed(2)}</span>
+                  </div>
+                  <CheckoutButton items={items} total={total} />
+                </div>
               </div>
             )}
-
-            <DrawerFooter>
-              <button
-                className="w-full bg-secondary text-white py-3 rounded-md font-bold hover:bg-secondary/90 transition-colors"
-                onClick={() => {
-                  onClose();
-                  window.location.href = '/order';
-                }}
-              >
-                START YOUR ORDER
-              </button>
-            </DrawerFooter>
           </div>
         </div>
       </DrawerContent>
