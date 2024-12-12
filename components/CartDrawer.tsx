@@ -10,6 +10,14 @@ interface CartDrawerProps {
   onClose: () => void;
 }
 
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity?: number;
+  image?: string;
+}
+
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, itemCount, removeItem } = useCart();
 

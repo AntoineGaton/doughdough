@@ -1,43 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { DealsModal } from "./DealsModal";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { DealsModal } from "./modals/DealsModal";
+import { DealOrderModal } from "./modals/DealOrderModal";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-const deals = [
-  {
-    id: 1,
-    title: "$7 Deal Lover's™ Menu",
-    description: "Choose 2 or more faves, 7 days a week",
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop&q=60",
-    price: "7.00"
-  },
-  {
-    id: 2,
-    title: "Large 1-Topping Pizza",
-    description: "Our best delivery deal",
-    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&auto=format&fit=crop&q=60",
-    price: "9.99"
-  },
-  {
-    id: 3,
-    title: "Big Boneless Wings Bundle",
-    description: "16 wings, 2 orders of fries & 2 dips",
-    image: "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800&auto=format&fit=crop&q=60",
-    price: "15.99"
-  }
-];
+type Deal = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+  options: string[];
+  terms: string;
+  isActive: boolean;
+  featured: boolean;
+  discount?: string;
+}
 
 export function FeaturedDeals() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deals, setDeals] = useState<Deal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDealsModalOpen, setIsDealsModalOpen] = useState(false);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+
+  useEffect(() => {
+    const fetchDeals = async () => {
+      try {
+        const dealsRef = collection(db, 'deals');
+        const q = query(dealsRef, where('featured', '==', true), where('isActive', '==', true));
+        const querySnapshot = await getDocs(q);
+        
+        const dealsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Deal[];
+        
+        setDeals(dealsData);
+      } catch (error) {
+        console.error('Error fetching deals:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeals();
+  }, []);
+
+  const handleOrderNow = (deal: Deal) => {
+    setSelectedDeal(deal);
+    setIsOrderModalOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-secondary" />
+      </div>
+    );
+  }
 
   return (
     <section>
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Featured</h2>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsDealsModalOpen(true)}
           className="text-red-600 hover:text-red-700 font-semibold flex items-center"
         >
           SEE MORE <ArrowRight className="ml-1 h-4 w-4" />
@@ -51,30 +83,43 @@ export function FeaturedDeals() {
           >
             <div className="relative h-48 w-full">
               <Image
-                src={deal.image}
+                src={deal.imageUrl}
                 alt={deal.title}
                 fill
                 className="object-cover"
               />
-              <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full">
-                ${deal.price}
-              </div>
+              {deal.discount && (
+                <div className="absolute top-4 right-4 bg-white text-red-600 px-3 py-1 rounded-full font-bold">
+                  {deal.discount}
+                </div>
+              )}
             </div>
             <div className="p-4">
               <h3 className="text-xl font-bold text-gray-900 mb-2">{deal.title}</h3>
               <p className="text-gray-600">{deal.description}</p>
-              <div className="mt-4 flex items-center text-red-600 font-semibold">
+              <button 
+                onClick={() => handleOrderNow(deal)}
+                className="mt-4 flex items-center text-red-600 font-semibold"
+              >
                 Order Now <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </div>
+              </button>
             </div>
           </div>
         ))}
       </div>
 
       <DealsModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        isOpen={isDealsModalOpen} 
+        onClose={() => setIsDealsModalOpen(false)} 
       />
+      
+      {selectedDeal && (
+        <DealOrderModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          deal={selectedDeal}
+        />
+      )}
     </section>
   );
 }

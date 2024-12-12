@@ -12,7 +12,16 @@ interface CartState {
   clearCart: () => void;
 }
 
-type CartItem = Pizza | Drink | Side;
+type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  image?: string;
+  selectedOptions?: string[];
+  isDeal?: boolean;
+  quantity?: number;
+};
 
 export const useCart = create<CartState>()(
   persist(

@@ -110,7 +110,7 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         fill
                         className="object-cover"
                       />
-                      <Badge className="absolute top-4 right-4 bg-white text-primary">
+                      <Badge className="absolute top-4 right-4 bg-white text-red-600">
                         ${pizza.price}
                       </Badge>
                     </div>
@@ -123,7 +123,6 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         onClick={() => {
                           addToCart(pizza);
                           toast.success(`Added ${pizza.name} to cart`);
-                          onClose();
                         }}
                         className="w-full"
                       >
@@ -151,7 +150,7 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         fill
                         className="object-cover"
                       />
-                      <Badge className="absolute top-4 right-4 bg-white text-primary">
+                      <Badge className="absolute top-4 right-4 bg-white text-red-600">
                         ${side.price}
                       </Badge>
                     </div>
@@ -164,7 +163,6 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         onClick={() => {
                           addToCart(side);
                           toast.success(`Added ${side.name} to cart`);
-                          onClose();
                         }}
                         className="w-full"
                       >
@@ -192,7 +190,7 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         fill
                         className="object-cover"
                       />
-                      <Badge className="absolute top-4 right-4 bg-white text-primary">
+                      <Badge className="absolute top-4 right-4 bg-white text-red-600">
                         ${drink.price}
                       </Badge>
                     </div>
@@ -205,7 +203,6 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                         onClick={() => {
                           addToCart(drink);
                           toast.success(`Added ${drink.name} to cart`);
-                          onClose();
                         }}
                         className="w-full"
                       >

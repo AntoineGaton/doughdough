@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { loadStripe } from '@stripe/stripe-js';
 import toast from 'react-hot-toast';
+import { CartItem } from './CartDrawer';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface CheckoutButtonProps {
-  items: any[];
+  items: CartItem[];
   total: number;
 }
 
@@ -25,24 +26,47 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
     try {
       setIsLoading(true);
       
+      const checkoutItems = items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1,
+        image: item.image || '/fallback-pizza.jpg'
+      }));
+
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          items,
+          items: checkoutItems,
           userId: user.uid,
         }),
       });
 
-      const { sessionId } = await response.json();
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Checkout failed');
+      }
+
       const stripe = await stripePromise;
-      
-      await stripe?.redirectToCheckout({ sessionId });
+
+      if (!stripe) {
+        throw new Error('Stripe failed to load');
+      }
+
+      const { error } = await stripe.redirectToCheckout({ 
+        sessionId: data.sessionId 
+      });
+
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Something went wrong!');
+      toast.error(error instanceof Error ? error.message : 'Something went wrong with the checkout');
     } finally {
       setIsLoading(false);
     }

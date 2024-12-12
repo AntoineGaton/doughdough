@@ -12,6 +12,7 @@
     "update-images": "ts-node --project tsconfig.seed.json utils/update-pizza-images.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",

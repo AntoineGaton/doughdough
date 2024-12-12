@@ -103,11 +103,6 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
                     <span>Valid on {deal.validityRules.month}/{deal.validityRules.day}</span>
                   </div>
                 )}
-                {deal.price > 0 && (
-                  <p className="text-lg font-bold text-primary mt-2">
-                    ${deal.price.toFixed(2)}
-                  </p>
-                )}
                 <p className="text-xs text-gray-500 mt-2">{deal.terms}</p>
               </div>
             </div>

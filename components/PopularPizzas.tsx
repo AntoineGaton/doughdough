@@ -13,7 +13,12 @@ export function PopularPizzas() {
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
+  const { addToCart, items, removeItem } = useCart();
+
+  const getItemQuantity = (id: string) => {
+    const item = items.find(item => item.id === id);
+    return item?.quantity || 0;
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -87,6 +92,18 @@ export function PopularPizzas() {
                   <div className="absolute top-4 right-4 bg-white text-red-600 px-3 py-1 rounded-full font-bold">
                     ${pizza.price}
                   </div>
+                  {getItemQuantity(pizza.id) > 0 && (
+                    <div 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeItem(pizza.id);
+                      }}
+                      className="absolute top-4 left-4 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold cursor-pointer"
+                    >
+                      <span className="hover:hidden">{getItemQuantity(pizza.id)}</span>
+                      <span className="hidden hover:block">-</span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{pizza.name}</h3>
