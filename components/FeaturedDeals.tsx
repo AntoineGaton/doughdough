@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { DealsModal } from "./DealsModal";
 
 const deals = [
   {
@@ -29,22 +30,23 @@ const deals = [
 ];
 
 export function FeaturedDeals() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section>
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Featured</h2>
-        <Link 
-          href="/deals" 
+        <button 
+          onClick={() => setIsModalOpen(true)}
           className="text-red-600 hover:text-red-700 font-semibold flex items-center"
         >
           SEE MORE <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
+        </button>
       </div>
       <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {deals.map((deal) => (
-          <Link 
-            key={deal.id} 
-            href={`/deals/${deal.id}`}
+          <div 
+            key={deal.id}
             className="group bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]"
           >
             <div className="relative h-48 w-full">
@@ -65,9 +67,14 @@ export function FeaturedDeals() {
                 Order Now <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
+
+      <DealsModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 }

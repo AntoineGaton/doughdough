@@ -1,23 +1,25 @@
-export type Deal = {
+// Interface for the deals data
+export interface Deal {
   id: string;
   title: string;
   description: string;
-  discount: string;
   imageUrl: string;
-  price: number;
+  discount: string;
   terms: string;
-  validityRules: {
-    type: "date" | "always" | "weekday" | "time";
-    month?: number;
-    day?: number;
-    days?: number[];
-    startHour?: number;
-    endHour?: number;
-  };
+  price: number;
   isActive: boolean;
   featured: boolean;
-};
+  validityRules: {
+    type: 'date' | 'time' | 'always' | 'weekday';
+    month?: number;
+    day?: number;
+    startHour?: number;
+    endHour?: number;
+    days?: number[];
+  };
+}
 
+// Used for testing and initial data in Firebase
 export const deals: Deal[] = [
   {
     id: "christmas-special",
