@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 export interface UserProfileData {
   displayName: string;
+  email: string | null;
   phoneNumber: string;
   address: string;
   city: string;
@@ -61,6 +62,7 @@ export function UserProfile() {
   const [uploading, setUploading] = useState(false);
   const [profile, setProfile] = useState<UserProfileData>({
     displayName: user?.displayName || '',
+    email: user?.email || null,
     phoneNumber: '',
     address: '',
     city: '',
