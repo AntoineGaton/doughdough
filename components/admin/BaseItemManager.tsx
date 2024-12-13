@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, updateDoc, getDoc, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
@@ -18,39 +18,54 @@ import { toast } from 'react-hot-toast';
 interface BaseItem {
   id: string;
   name: string;
-  price: number;
   description?: string;
   image?: string;
+  category?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  title?: string;
+  discount?: string;
+  price?: number;
+  isActive?: boolean;
+  featured?: boolean;
+  terms?: string;
 }
 
-interface BaseItemManagerProps {
+interface BaseItemManagerProps<T extends BaseItem> {
   collectionName: string;
   AddModal: React.ComponentType<any>;
   EditModal: React.ComponentType<any>;
-  columns: { key: string; label: string }[];
+  columns: { key: keyof T; label: string }[];
 }
 
-export function BaseItemManager({ 
+export function BaseItemManager<T extends BaseItem>({ 
   collectionName, 
   AddModal, 
   EditModal,
   columns 
-}: BaseItemManagerProps) {
-  const [items, setItems] = useState<BaseItem[]>([]);
+}: BaseItemManagerProps<T>) {
+  const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<BaseItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<T | null>(null);
 
   const fetchItems = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, collectionName));
-      const fetchedItems = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as BaseItem[];
+      const fetchedItems = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        console.log('Document ID:', doc.id, 'Document data:', data);
+        return {
+          ...data,
+          id: doc.id,
+          category: data.category
+        } as T;
+      });
+      console.log('Fetched items with IDs:', fetchedItems);
       setItems(fetchedItems);
     } catch (error) {
+      console.error('Error fetching items:', error);
       toast.error('Failed to fetch items');
     } finally {
       setLoading(false);
@@ -73,9 +88,52 @@ export function BaseItemManager({
     }
   };
 
-  const handleEdit = (item: BaseItem) => {
-    setSelectedItem(item);
-    setIsEditModalOpen(true);
+  const handleUpdate = async (id: string, updatedData: Partial<T>) => {
+    try {
+      console.log('Attempting to update document with ID:', id);
+      const docRef = doc(db, collectionName, id);
+      
+      await updateDoc(docRef, {
+        ...updatedData,
+        updatedAt: new Date()
+      });
+      
+      toast.success('Item updated successfully');
+      fetchItems();
+    } catch (error) {
+      console.error('Error updating item:', error);
+      toast.error('Failed to update item');
+    }
+  };
+
+  const handleEdit = async (item: T) => {
+    try {
+      // Query for the document using name
+      const q = query(
+        collection(db, collectionName), 
+        where("name", "==", item.name)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        toast.error('Item not found');
+        return;
+      }
+
+      // Get the actual document with Firestore ID
+      const actualDoc = querySnapshot.docs[0];
+      const itemWithCorrectId = {
+        ...item,
+        id: actualDoc.id  // Use the actual Firestore document ID
+      };
+
+      console.log('Found document with ID:', actualDoc.id);
+      setSelectedItem(itemWithCorrectId);
+      setIsEditModalOpen(true);
+    } catch (error) {
+      console.error('Error preparing item for edit:', error);
+      toast.error('Failed to prepare item for editing');
+    }
   };
 
   if (loading) {
@@ -101,7 +159,7 @@ export function BaseItemManager({
             <TableHeader className="sticky top-0 bg-white z-10">
               <TableRow>
                 {columns.map((column) => (
-                  <TableHead key={column.key} className="font-semibold">
+                  <TableHead key={String(column.key)} className="font-semibold">
                     {column.label}
                   </TableHead>
                 ))}
@@ -112,14 +170,16 @@ export function BaseItemManager({
               {items.map((item) => (
                 <TableRow key={item.id} className="hover:bg-gray-50">
                   {columns.map((column) => (
-                    <TableCell key={`${item.id}-${column.key}`} className="py-3">
-                      {column.key === 'price' ? (
-                        `$${Number(item[column.key]).toFixed(2)}`
-                      ) : typeof item[column.key as keyof BaseItem] === 'boolean' ? (
-                        item[column.key as keyof BaseItem] ? 'Yes' : 'No'
-                      ) : (
-                        item[column.key as keyof BaseItem]
-                      )}
+                    <TableCell key={`${item.id}-${String(column.key)}`} className="py-3">
+                      {(column.key === 'image' ? (
+                        item[column.key] ? (
+                          <img 
+                            src={String(item[column.key])} 
+                            alt={String(item.name)} 
+                            className="w-16 h-16 object-cover rounded"
+                          />
+                        ) : 'No image'
+                      ) : item[column.key]) as React.ReactNode}
                     </TableCell>
                   ))}
                   <TableCell className="text-right">
@@ -165,10 +225,12 @@ export function BaseItemManager({
             setIsEditModalOpen(false);
             setSelectedItem(null);
           }}
-          onSuccess={() => {
-            setIsEditModalOpen(false);
-            setSelectedItem(null);
-            fetchItems();
+          onSuccess={(updatedData: Partial<T>) => {
+            if (selectedItem?.id) {
+              handleUpdate(selectedItem.id, updatedData);
+              setIsEditModalOpen(false);
+              setSelectedItem(null);
+            }
           }}
           item={selectedItem}
         />

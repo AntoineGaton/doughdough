@@ -10,7 +10,6 @@ interface Pizza extends BaseItem {
   price: number;
   description: string;
   image: string;
-  isPopular: boolean;
 }
 
 const columns: { key: keyof Pizza; label: string }[] = [
@@ -18,10 +17,9 @@ const columns: { key: keyof Pizza; label: string }[] = [
   { key: 'name', label: 'Name' },
   { key: 'price', label: 'Price' },
   { key: 'description', label: 'Description' },
-  { key: 'isPopular', label: 'Popular' },
 ];
 
-export function PizzaManager() {
+export function PizzasManager() {
   return (
     <BaseItemManager<Pizza>
       collectionName="pizzas"
@@ -30,4 +28,4 @@ export function PizzaManager() {
       columns={columns}
     />
   );
-} 
+}

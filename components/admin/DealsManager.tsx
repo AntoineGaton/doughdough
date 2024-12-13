@@ -3,8 +3,9 @@
 import { BaseItemManager } from './BaseItemManager';
 import { AddDealModal } from './AddDealModal';
 import { EditDealModal } from './EditDealModal';
+import { Deal } from '@/types';
 
-const columns = [
+const columns: { key: keyof Deal; label: string }[] = [
   { key: 'title', label: 'Title' },
   { key: 'discount', label: 'Discount' },
   { key: 'price', label: 'Price' },
@@ -14,7 +15,7 @@ const columns = [
 
 export function DealsManager() {
   return (
-    <BaseItemManager
+    <BaseItemManager<Deal>
       collectionName="deals"
       AddModal={AddDealModal}
       EditModal={EditDealModal}

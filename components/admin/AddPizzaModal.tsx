@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { toast } from 'react-hot-toast';
 
 interface AddPizzaModalProps {
   isOpen: boolean;
@@ -18,27 +20,75 @@ export function AddPizzaModal({ isOpen, onClose, onSuccess }: AddPizzaModalProps
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState('');
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addDoc(collection(db, 'pizzas'), {
-      name,
-      price,
-      description,
-      isPopular: false,
-      ingredients: []
-    });
-    onSuccess();
-    onClose();
+    try {
+      if (!image) {
+        toast.error('Please select an image');
+        return;
+      }
+
+      const storageRef = ref(storage, `pizzas/${image.name}`);
+      const snapshot = await uploadBytes(storageRef, image);
+      const imageUrl = await getDownloadURL(snapshot.ref);
+
+      await addDoc(collection(db, 'pizzas'), {
+        name,
+        price: parseFloat(price),
+        description,
+        image: imageUrl,
+        isPopular: false,
+        ingredients: [],
+        createdAt: new Date()
+      });
+
+      toast.success('Pizza added successfully');
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error('Error adding pizza:', error);
+      toast.error('Failed to add pizza');
+    }
   };
 
   return (
     <AdminModal title="Add New Pizza" isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          {imagePreview && (
+            <img 
+              src={imagePreview} 
+              alt="Preview" 
+              className="w-32 h-32 object-cover rounded mx-auto"
+            />
+          )}
+          <Input 
+            type="file" 
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+          />
+        </div>
         <Input 
           placeholder="Pizza Name" 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
+          required
         />
         <Input 
           placeholder="Price" 
@@ -46,11 +96,13 @@ export function AddPizzaModal({ isOpen, onClose, onSuccess }: AddPizzaModalProps
           step="0.01" 
           value={price} 
           onChange={(e) => setPrice(e.target.value)} 
+          required
         />
         <Textarea 
           placeholder="Description" 
           value={description} 
           onChange={(e) => setDescription(e.target.value)} 
+          required
         />
         <Button type="submit" className="w-full">Add Pizza</Button>
       </form>

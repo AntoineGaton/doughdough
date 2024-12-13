@@ -9,11 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'react-hot-toast';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface EditSideModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (updatedData: any) => void;
   item: any;
 }
 
@@ -22,6 +24,8 @@ export function EditSideModal({ isOpen, onClose, onSuccess, item }: EditSideModa
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('appetizer');
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   useEffect(() => {
     if (item) {
@@ -29,23 +33,44 @@ export function EditSideModal({ isOpen, onClose, onSuccess, item }: EditSideModa
       setPrice(item.price?.toString() || '');
       setDescription(item.description || '');
       setCategory(item.category || 'appetizer');
+      setImagePreview(item.image || '');
     }
   }, [item]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const sideRef = doc(db, 'sides', item.id);
-      await updateDoc(sideRef, {
+      let imageUrl = item.image;
+
+      if (image) {
+        const storageRef = ref(storage, `sides/${image.name}`);
+        const snapshot = await uploadBytes(storageRef, image);
+        imageUrl = await getDownloadURL(snapshot.ref);
+      }
+
+      const updatedData = {
         name,
         price: parseFloat(price),
         description,
         category,
+        image: imageUrl,
         updatedAt: new Date()
-      });
+      };
+      
+      onSuccess(updatedData);
       toast.success('Side item updated successfully');
-      onSuccess();
-      onClose();
     } catch (error) {
       toast.error('Failed to update side item');
       console.error('Error updating side:', error);
@@ -55,10 +80,25 @@ export function EditSideModal({ isOpen, onClose, onSuccess, item }: EditSideModa
   return (
     <AdminModal title="Edit Side Item" isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          {imagePreview && (
+            <img 
+              src={imagePreview} 
+              alt="Preview" 
+              className="w-32 h-32 object-cover rounded mx-auto"
+            />
+          )}
+          <Input 
+            type="file" 
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </div>
         <Input 
           placeholder="Side Name" 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
+          required
         />
         <Input 
           placeholder="Price" 
@@ -66,6 +106,7 @@ export function EditSideModal({ isOpen, onClose, onSuccess, item }: EditSideModa
           step="0.01" 
           value={price} 
           onChange={(e) => setPrice(e.target.value)} 
+          required
         />
         <Select value={category} onValueChange={setCategory}>
           <SelectTrigger>
@@ -82,6 +123,7 @@ export function EditSideModal({ isOpen, onClose, onSuccess, item }: EditSideModa
           placeholder="Description" 
           value={description} 
           onChange={(e) => setDescription(e.target.value)} 
+          required
         />
         <Button type="submit" className="w-full">Update Side</Button>
       </form>
