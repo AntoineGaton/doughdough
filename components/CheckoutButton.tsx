@@ -41,7 +41,8 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
         },
         body: JSON.stringify({
           items: checkoutItems,
-          userId: user.uid,
+          userId: user?.uid || null,
+          customerName: user?.email || null
         }),
       });
 
