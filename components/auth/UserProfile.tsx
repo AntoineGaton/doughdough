@@ -352,6 +352,9 @@ export function UserProfile() {
               setIsEditing={setIsEditing}
               setProfile={setProfile}
               handleSubmit={handleSubmit}
+              handlePhotoUpload={handlePhotoUpload}
+              fileInputRef={fileInputRef}
+              uploading={uploading}
             />
           )}
         </div>

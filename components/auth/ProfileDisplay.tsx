@@ -1,13 +1,14 @@
 import { User } from 'firebase/auth';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Camera } from 'lucide-react';
+import { ChevronDown, Camera, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UserProfileData } from './UserProfile';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AdminDashboard } from '../admin/AdminDashboard';
 
 const formatPhoneNumber = (phoneNumber: string | null | undefined) => {
   if (!phoneNumber) return 'Not set';
@@ -30,9 +31,12 @@ interface ProfileDisplayProps {
   setIsEditing: (value: boolean) => void;
   setProfile: (value: any) => void;
   handleSubmit: (e: React.FormEvent) => void;
+  handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  uploading: boolean;
 }
 
-export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLogout, OrderHistory, isEditing, setIsEditing, setProfile, handleSubmit }: ProfileDisplayProps) {
+export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLogout, OrderHistory, isEditing, setIsEditing, setProfile, handleSubmit, handlePhotoUpload, fileInputRef, uploading }: ProfileDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { logout } = useAuth();
 
@@ -64,7 +68,6 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
   if (isAdmin) {
     return (
       <div className="space-y-6 px-2 bg-white rounded-lg">
-        {/* First section - Avatar and welcome */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -75,21 +78,39 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
                 />
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
+              {!uploading && (
+                <>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 p-1 bg-secondary text-white rounded-full hover:bg-secondary/80 transition-colors"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handlePhotoUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </>
+              )}
+              {uploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-white" />
+                </div>
+              )}
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Hi DoughDough Pizza,</h2>
+              <h2 className="text-2xl font-bold">Hi {profile.displayName || 'Admin'},</h2>
               <p className="text-gray-500">Welcome back!</p>
             </div>
           </div>
-          <button 
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-700 font-semibold"
-          >
+          <button onClick={handleLogout} className="text-secondary hover:text-secondary/80">
             Sign Out
           </button>
         </div>
 
-        {/* Second section - Profile info */}
         <div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -98,33 +119,32 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
                 Admin
               </span>
             </div>
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
-            >
-              {isExpanded ? 'Show Less' : 'Show More'}
-              <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
-            </button>
+            {!isEditing && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
+              >
+                {isExpanded ? 'Show Less' : 'Show More'}
+                <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
+              </button>
+            )}
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="text-sm text-gray-500">Name</label>
+              {isEditing ? (
+                <Input
+                  value={profile.displayName}
+                  onChange={(e) => setProfile((prev: UserProfileData) => ({ ...prev, displayName: e.target.value }))}
+                />
+              ) : (
+                <p className="font-medium">{profile.displayName || 'Not set'}</p>
+              )}
+            </div>
             <div>
               <label className="text-sm text-gray-500">Email</label>
               <p className="font-medium">{profile.email || 'Not set'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-gray-500">Name</label>
-              <p className="font-medium">{profile.displayName || 'Not set'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-gray-500">Phone Number</label>
-              <p className="font-medium">{formatPhoneNumber(profile.phoneNumber)}</p>
-            </div>
-            <div>
-              <label className="text-sm text-gray-500">Role</label>
-              <p className="font-medium">Administrator</p>
             </div>
           </div>
 
@@ -139,6 +159,17 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
               >
                 <div className="grid grid-cols-2 gap-4 pt-4">
                   <div>
+                    <label className="text-sm text-gray-500">Phone Number</label>
+                    {isEditing ? (
+                      <Input
+                        value={profile.phoneNumber}
+                        onChange={(e) => setProfile((prev: UserProfileData) => ({ ...prev, phoneNumber: e.target.value }))}
+                      />
+                    ) : (
+                      <p className="font-medium">{formatPhoneNumber(profile.phoneNumber)}</p>
+                    )}
+                  </div>
+                  <div>
                     <label className="text-sm text-gray-500">Access Level</label>
                     <p className="font-medium">Full Access</p>
                   </div>
@@ -150,18 +181,29 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
                         : 'Not available'}
                     </p>
                   </div>
-                  <div>
-                    <label className="text-sm text-gray-500">Account Created</label>
-                    <p className="font-medium">
-                      {profile.metadata?.creationTime
-                        ? new Date(profile.metadata.creationTime).toLocaleDateString()
-                        : 'Not available'}
-                    </p>
-                  </div>
                 </div>
+                {isEditing ? (
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                    <Button onClick={handleSubmit}>Save Changes</Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    className="w-full mt-4"
+                    variant="outline"
+                  >
+                    Edit Profile
+                  </Button>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        <div className="pt-8 border-t">
+          <h3 className="text-lg font-semibold mb-4 text-secondary">Control Panel</h3>
+          <AdminDashboard />
         </div>
       </div>
     );
@@ -180,12 +222,28 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onPhotoClick, onLo
               />
               <AvatarFallback>{profile.displayName?.[0] || 'U'}</AvatarFallback>
             </Avatar>
-            <button
-              onClick={onPhotoClick}
-              className="absolute bottom-0 right-0 p-1 bg-secondary text-white rounded-full hover:bg-secondary/80 transition-colors"
-            >
-              <Camera className="h-4 w-4" />
-            </button>
+            {!uploading && (
+              <>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 p-1 bg-secondary text-white rounded-full hover:bg-secondary/80 transition-colors"
+                >
+                  <Camera className="h-4 w-4" />
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handlePhotoUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </>
+            )}
+            {uploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                <Loader2 className="h-6 w-6 animate-spin text-white" />
+              </div>
+            )}
           </div>
           <div>
             <h2 className="text-2xl font-bold">Hi {profile.displayName || 'there'},</h2>

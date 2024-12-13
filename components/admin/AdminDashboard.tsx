@@ -36,15 +36,14 @@ export function AdminDashboard() {
 
   return (
     <div className="w-[600px] mx-auto space-y-8">
-      <div className="bg-white rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Control Panel</h2>
+      <div className="bg-white rounded-lg">
         <Tabs defaultValue="pizzas">
-          <TabsList>
-            <TabsTrigger value="pizzas">Pizzas</TabsTrigger>
-            <TabsTrigger value="drinks">Drinks</TabsTrigger>
-            <TabsTrigger value="sides">Sides</TabsTrigger>
-            <TabsTrigger value="deals">Deals</TabsTrigger>
-            <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsList className="w-full">
+            <TabsTrigger value="pizzas" className="flex-1">Pizzas</TabsTrigger>
+            <TabsTrigger value="drinks" className="flex-1">Drinks</TabsTrigger>
+            <TabsTrigger value="sides" className="flex-1">Sides</TabsTrigger>
+            <TabsTrigger value="deals" className="flex-1">Deals</TabsTrigger>
+            <TabsTrigger value="orders" className="flex-1">Orders</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pizzas">
