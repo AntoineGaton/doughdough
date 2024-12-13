@@ -14,6 +14,7 @@ import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { formatDistance } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export interface UserProfileData {
   displayName: string;
@@ -23,6 +24,10 @@ export interface UserProfileData {
   state: string;
   zipCode: string;
   photoURL?: string | null;
+  metadata?: {
+    creationTime?: string;
+    lastSignInTime?: string;
+  };
 }
 
 // Validation schema
@@ -62,10 +67,15 @@ export function UserProfile() {
     state: '',
     zipCode: '',
     photoURL: user?.photoURL || '',
+    metadata: {
+      creationTime: user?.metadata.creationTime,
+      lastSignInTime: user?.metadata.lastSignInTime
+    }
   });
   const [isEditing, setIsEditing] = useState(false);
   const [orders, setOrders] = useState<OrderHistory[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   // Fetch user profile
   useEffect(() => {
@@ -323,122 +333,24 @@ export function UserProfile() {
   return (
     <div className="container mx-auto">
       <div className="bg-white rounded-lg shadow w-fit mx-auto min-w-[600px]">
-        <div className="flex justify-between items-center bg-white p-4 border-b">
-          <div className="flex items-center gap-4">
-            <ProfileAvatar />
-            <div>
-              <h2 className="text-2xl font-bold">
-                Hi {profile.displayName},
-              </h2>
-              <p className="text-gray-500">Welcome back!</p>
-            </div>
-          </div>
-          <Button 
-            variant="destructive" 
-            onClick={logout}
-            size="sm"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-
         <div className="h-[600px] overflow-y-auto p-4">
           {loading ? (
             <div className="flex justify-center items-center h-full">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
           ) : (
-            <div className="space-y-8">
-              {isEditing ? (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Name</label>
-                      <Input
-                        value={profile.displayName}
-                        onChange={(e) => setProfile(prev => ({ ...prev, displayName: e.target.value }))}
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Phone</label>
-                      <Input
-                        value={profile.phoneNumber}
-                        onChange={(e) => {
-                          const cleaned = e.target.value.replace(/\D/g, '');
-                          if (cleaned.length <= 10) {
-                            setProfile(prev => ({ ...prev, phoneNumber: cleaned }));
-                          }
-                        }}
-                        placeholder="(123) 456-7890"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Address</label>
-                      <Input
-                        value={profile.address}
-                        onChange={(e) => setProfile(prev => ({ ...prev, address: e.target.value }))}
-                        placeholder="Street address"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">City</label>
-                      <Input
-                        value={profile.city}
-                        onChange={(e) => setProfile(prev => ({ ...prev, city: e.target.value }))}
-                        placeholder="City"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">State</label>
-                      <Input
-                        value={profile.state}
-                        onChange={(e) => setProfile(prev => ({ ...prev, state: e.target.value }))}
-                        placeholder="ST"
-                        maxLength={2}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">ZIP Code</label>
-                      <Input
-                        value={profile.zipCode}
-                        onChange={(e) => setProfile(prev => ({ ...prev, zipCode: e.target.value }))}
-                        placeholder="12345"
-                        maxLength={5}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={loading}>
-                      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <ProfileDisplay 
-                    profile={{ ...user, ...profile }} 
-                    isAdmin={isAdmin}
-                    isLoading={isLoading}
-                    onEditClick={() => setIsEditing(true)}
-                    onPhotoClick={() => fileInputRef.current?.click()}
-                    OrderHistory={OrderHistory}
-                  />
-                </>
-              )}
-              
-              {isAdmin && (
-                <div className="pt-8 border-t">
-                  <div className="bg-white rounded-lg min-h-[400px]">
-                    <AdminDashboard />
-                  </div>
-                </div>
-              )}
-            </div>
+            <ProfileDisplay
+              profile={profile}
+              isAdmin={isAdmin}
+              isLoading={loading}
+              onPhotoClick={() => setIsPhotoModalOpen(true)}
+              onLogout={logout}
+              OrderHistory={OrderHistory}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              setProfile={setProfile}
+              handleSubmit={handleSubmit}
+            />
           )}
         </div>
       </div>

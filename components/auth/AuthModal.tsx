@@ -16,7 +16,7 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [view, setView] = useState<"login" | "register">("login");
-  const { user, isLoading } = useAuth();
+  const { user, isAdmin, isLoading } = useAuth();
 
   if (!isOpen) return null;
 
@@ -37,7 +37,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           className="sm:max-w-[800px] max-h-[80vh] overflow-hidden p-0"
         >
           <DialogHeader className="p-4 border-b">
-            <DialogTitle>Dashboard</DialogTitle>
+            <DialogTitle>{isAdmin ? "Control Panel" : "Dashboard"}</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1">
             <UserProfile />
