@@ -132,12 +132,16 @@ export function NavBar() {
               size="icon"
               onClick={() => setIsAuthModalOpen(true)}
             >
-              <Avatar>
-                <AvatarImage src={user?.photoURL || ''} />
-                <AvatarFallback>
-                  {user?.email?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
+              {user ? (
+                <Avatar>
+                  <AvatarImage src={user?.photoURL || ''} />
+                  <AvatarFallback>
+                    {user?.email?.charAt(0).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <User className="h-6 w-6 sm:h-8 sm:w-8" />
+              )}
             </Button>
             <div className="text-secondary mx-1 sm:mx-2">|</div>
             <Button
