@@ -17,6 +17,8 @@ import { Button } from "./ui/button";
 import { DealsModal } from "./modals/DealsModal";
 import { MenuModal } from "./modals/MenuModal";
 import { ContactModal } from "./modals/ContactModal";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { UserCircle } from "lucide-react";
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,8 +27,8 @@ export function NavBar() {
   const [rgbValues, setRgbValues] = useState({ r: 0, g: 0, b: 0 });
   const { itemCount } = useCart();
   const pathname = usePathname();
+  const { user, isAdmin, isLoading } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
   const [isDealsModalOpen, setIsDealsModalOpen] = useState(false);
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -112,7 +114,7 @@ export function NavBar() {
           <div className="absolute left-1/2 -translate-x-1/2 py-2 sm:py-3">
             <Link href="/" className="block">
               <Image 
-                src="/images/logo.png" 
+                src="/images/secondary-logo.jpg" 
                 alt="DoughDough's Logo" 
                 width={250} 
                 height={250}
@@ -130,12 +132,12 @@ export function NavBar() {
               size="icon"
               onClick={() => setIsAuthModalOpen(true)}
             >
-              <User 
-                className="h-6 w-6 sm:h-8 sm:w-8" 
-                style={isAdmin ? {
-                  color: `rgb(${rgbValues.r}, ${rgbValues.g}, ${rgbValues.b})`
-                } : undefined}
-              />
+              <Avatar>
+                <AvatarImage src={user?.photoURL || ''} />
+                <AvatarFallback>
+                  {user?.email?.charAt(0).toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
             </Button>
             <div className="text-secondary mx-1 sm:mx-2">|</div>
             <Button

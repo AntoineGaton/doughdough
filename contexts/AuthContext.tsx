@@ -12,8 +12,8 @@ import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
   isAdmin: boolean;
+  isLoading: boolean;
   signup: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading: loading, isAdmin, signup, login, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

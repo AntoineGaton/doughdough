@@ -1,22 +1,22 @@
 "use client";
 
 import { BaseItemManager } from './BaseItemManager';
-import { AddPizzaModal } from './AddPizzaModal';
-import { EditPizzaModal } from './EditPizzaModal';
+import { AddSideModal } from './AddSideModal';
+import { EditSideModal } from './EditSideModal';
 
 const columns = [
   { key: 'name', label: 'Name' },
   { key: 'price', label: 'Price' },
   { key: 'description', label: 'Description' },
-  { key: 'isPopular', label: 'Popular' },
+  { key: 'category', label: 'Category' },
 ];
 
-export function PizzaManager() {
+export function SidesManager() {
   return (
     <BaseItemManager
-      collectionName="pizzas"
-      AddModal={AddPizzaModal}
-      EditModal={EditPizzaModal}
+      collectionName="sides"
+      AddModal={AddSideModal}
+      EditModal={EditSideModal}
       columns={columns}
     />
   );

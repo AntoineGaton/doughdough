@@ -7,6 +7,7 @@ import { RegisterForm } from "./RegisterForm";
 import { UserProfile } from "./UserProfile";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,21 +16,30 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [view, setView] = useState<"login" | "register">("login");
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   if (!isOpen) return null;
+
+  if (isLoading) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-[800px] h-[300px] flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   if (user) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent 
-          className="sm:max-w-[425px]"
-          aria-describedby="user-profile-description"
+          className="sm:max-w-[800px] max-h-[80vh] overflow-hidden p-0"
         >
-          <DialogHeader>
-            <DialogTitle>Account Settings</DialogTitle>
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Dashboard</DialogTitle>
           </DialogHeader>
-          <div id="user-profile-description">
+          <div className="overflow-y-auto flex-1">
             <UserProfile />
           </div>
         </DialogContent>
