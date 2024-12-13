@@ -426,12 +426,8 @@ export function UserProfile() {
                     isLoading={isLoading}
                     onEditClick={() => setIsEditing(true)}
                     onPhotoClick={() => fileInputRef.current?.click()}
+                    OrderHistory={OrderHistory}
                   />
-                  
-                  <div className="pt-8 border-t px-2">
-                    <h3 className="text-lg font-semibold mb-4 text-secondary">Order History</h3>
-                    <OrderHistory />
-                  </div>
                 </>
               )}
               

@@ -22,9 +22,10 @@ interface ProfileDisplayProps {
   isLoading: boolean;
   onEditClick: () => void;
   onPhotoClick: () => void;
+  OrderHistory: React.ComponentType;
 }
 
-export function ProfileDisplay({ profile, isAdmin, isLoading, onEditClick, onPhotoClick }: ProfileDisplayProps) {
+export function ProfileDisplay({ profile, isAdmin, isLoading, onEditClick, onPhotoClick, OrderHistory }: ProfileDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (isLoading) {
@@ -142,9 +143,13 @@ export function ProfileDisplay({ profile, isAdmin, isLoading, onEditClick, onPho
           )} />
         </button>
       </div>
-
-      <div className="relative cursor-pointer" onClick={onPhotoClick}>
-      </div>
+      {/* Only show Order History for non-admin users */}
+      {!isAdmin && (
+        <div className="pt-8 border-t px-2">
+          <h3 className="text-lg font-semibold mb-4 text-secondary">Order History</h3>
+          <OrderHistory />
+        </div>
+      )}
     </div>
   );
 } 
