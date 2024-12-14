@@ -29,7 +29,12 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
     drinks: false,
     sides: false
   });
-  const { addToCart } = useCart();
+  const { addToCart, items, removeItem } = useCart();
+
+  const getItemQuantity = (id: string) => {
+    const item = items.find(item => item.id === id);
+    return item?.quantity || 0;
+  };
 
   const fetchItems = async (collectionName: 'pizzas' | 'drinks' | 'sides') => {
     if (!isOpen) return;
@@ -102,7 +107,7 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                 {pizzas.map((pizza) => (
-                  <Card key={pizza.id} className="overflow-hidden">
+                  <Card key={pizza.id} className="overflow-hidden relative">
                     <div className="relative h-48">
                       <Image
                         src={pizza.image?.toString() || '/fallback-pizza.jpg'}
@@ -113,6 +118,18 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                       <Badge className="absolute top-4 right-4 bg-white text-red-600">
                         ${pizza.price}
                       </Badge>
+                      {getItemQuantity(pizza.id) > 0 && (
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeItem(pizza.id);
+                          }}
+                          className="absolute top-4 left-4 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold cursor-pointer"
+                        >
+                          <span className="hover:hidden">{getItemQuantity(pizza.id)}</span>
+                          <span className="hidden hover:block">-</span>
+                        </div>
+                      )}
                     </div>
                     <CardHeader>
                       <CardTitle>{pizza.name}</CardTitle>
