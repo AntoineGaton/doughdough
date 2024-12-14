@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -15,11 +16,32 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Implement contact form submission
-    console.log({ name, email, message });
-    onClose();
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      toast.success('Message sent successfully!');
+      onClose();
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message. Please try again.');
+    }
   };
 
   return (
