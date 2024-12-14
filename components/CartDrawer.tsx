@@ -27,9 +27,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     <>
       <Drawer open={isOpen} onOpenChange={onClose}>
         <DrawerContent className="min-w-[320px]">
-          <div className="bg-primary max-h-[85vh] overflow-y-auto">
-            <div className="mx-auto w-full max-w-sm">
-              <DrawerHeader className="flex items-center justify-between">
+          <div className={`bg-primary flex flex-col max-h-[85vh] overflow-y-auto ${
+            itemCount === 0 
+              ? 'min-h-[40vh]' 
+              : itemCount === 1 
+                ? 'min-h-[30vh]'
+                : items.length <= 2 
+                  ? 'min-h-[40vh]' 
+                  : items.length <= 3 
+                    ? 'min-h-[50vh]'
+                    : items.length <= 4 
+                      ? 'min-h-[60vh]' 
+                      : 'min-h-[70vh]'
+          }`}>
+            <div className="mx-auto w-full max-w-sm flex-1">
+              <DrawerHeader className="flex items-center justify-between sticky top-0 bg-primary z-10">
                 <div className="flex items-center justify-between w-full">
                   <div className="w-6" />
                   <div>

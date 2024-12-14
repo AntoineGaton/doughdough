@@ -90,8 +90,8 @@ export default function OrderSuccessPage() {
       </div>
       <Drawer open={isTrackingOpen} onOpenChange={setIsTrackingOpen}>
         <DrawerContent className="min-w-[320px]">
-          <div className="bg-primary max-h-[85vh] overflow-y-auto">
-            <div className="mx-auto w-full max-w-sm">
+          <div className="bg-primary h-[85vh] flex flex-col">
+            <div className="mx-auto w-full max-w-sm flex-1 overflow-hidden">
               <PizzaTracker />
             </div>
           </div>

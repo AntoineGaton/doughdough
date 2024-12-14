@@ -167,7 +167,7 @@ export function NavBar() {
       <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <DrawerContent 
           className={cn(
-            "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary overflow-y-auto",
+            "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary",
             {
               "h-[40vh]": activeView === "track",
               "h-[30vh]": !activeView
@@ -227,6 +227,7 @@ export function NavBar() {
                   animate={{ x: 0 }}
                   exit={{ x: "100%" }}
                   transition={{ duration: 0.3 }}
+                  className="h-full flex flex-col overflow-hidden"
                 >
                   <DrawerHeader className="flex items-center text-4xl font-semibold text-secondary">
                     <button
@@ -237,7 +238,9 @@ export function NavBar() {
                     </button>
                     <span className="w-full text-center">Order Status</span>
                   </DrawerHeader>
-                  {activeView === "track" && renderTrackOrder()}
+                  <div className="flex-1 overflow-hidden">
+                    {activeView === "track" && renderTrackOrder()}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
