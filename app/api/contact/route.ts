@@ -1,15 +1,44 @@
 import { NextResponse } from 'next/server';
+import { rateLimit } from '../../../lib/rate-limit';
 
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL!;
+const limiter = rateLimit({
+  interval: 60 * 1000, // 1 minute
+  uniqueTokenPerInterval: 500
+});
 
 export async function POST(req: Request) {
   try {
+    // Rate limiting
+    try {
+      await limiter.check(5, 'CONTACT_FORM'); // 5 requests per minute
+    } catch {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const { name, email, message } = await req.json();
+
+    // Input validation
+    if (!name || !email || !message) {
+      return NextResponse.json(
+        { error: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
 
     const discordMessage = {
       embeds: [{
         title: "New Contact Form Submission",
-        color: 0xc4391c, // DoughDough's red color
+        color: 0xc4391c,
         fields: [
           { name: "Name", value: name },
           { name: "Email", value: email },
@@ -19,7 +48,7 @@ export async function POST(req: Request) {
       }]
     };
 
-    const response = await fetch(DISCORD_WEBHOOK_URL, {
+    const response = await fetch(process.env.DISCORD_WEBHOOK_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

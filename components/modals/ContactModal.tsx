@@ -1,9 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 interface ContactModalProps {
@@ -15,11 +17,39 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateInputs = () => {
+    if (!name.trim()) {
+      toast.error('Name is required');
+      return false;
+    }
+    if (!email.trim()) {
+      toast.error('Email is required');
+      return false;
+    }
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      toast.error('Invalid email format');
+      return false;
+    }
+    if (!message.trim()) {
+      toast.error('Message is required');
+      return false;
+    }
+    if (message.length < 10) {
+      toast.error('Message must be at least 10 characters');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    if (!validateInputs()) return;
+
     try {
+      setIsLoading(true);
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -32,15 +62,22 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        throw new Error(data.error || 'Failed to send message');
       }
 
       toast.success('Message sent successfully!');
+      setName("");
+      setEmail("");
+      setMessage("");
       onClose();
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('Failed to send message. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,6 +95,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 placeholder="Your Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                disabled={isLoading}
                 required
               />
               <Input
@@ -65,6 +103,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 placeholder="Your Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
                 required
               />
               <Textarea
@@ -72,10 +111,22 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className="min-h-[150px]"
+                disabled={isLoading}
                 required
               />
-              <Button type="submit" className="w-full">
-                Send Message
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Message'
+                )}
               </Button>
             </form>
           </div>
