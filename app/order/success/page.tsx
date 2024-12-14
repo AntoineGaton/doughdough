@@ -55,15 +55,17 @@ export default function OrderSuccessPage() {
 
   return (
     <>
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 text-center">
-        <div className="space-y-6">
-          <Image
-            src="/images/logo2.png"
-            alt="DoughDough's Pizza"
-            width={200}
-            height={200}
-            className="mx-auto"
-          />
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-20 text-center">
+        <div className="space-y-[-90px]">
+          <div className="relative w-[800px] h-[800px] mx-auto">
+            <Image
+              src="/images/order-success.png"
+              alt="DoughDough's Pizza"
+              fill
+              priority
+              className="object-contain"
+            />
+          </div>
           <div className="space-y-4">
             <h1 className="text-4xl font-bold text-green-600">Order Confirmed!</h1>
             <p className="text-xl text-muted-foreground">

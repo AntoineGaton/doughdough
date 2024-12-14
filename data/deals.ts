@@ -17,6 +17,7 @@ export interface Deal {
     endHour?: number;
     days?: number[];
   };
+  options: string[];
 }
 
 // Used for testing and initial data in Firebase
@@ -35,7 +36,8 @@ export const deals: Deal[] = [
       day: 25
     },
     isActive: true,
-    featured: true
+    featured: true,
+    options: []
   },
   {
     id: "family-feast",
@@ -49,7 +51,8 @@ export const deals: Deal[] = [
       type: "always"
     },
     isActive: true,
-    featured: true
+    featured: true,
+    options: []
   },
   {
     id: "student-special",
@@ -63,7 +66,8 @@ export const deals: Deal[] = [
       type: "always"
     },
     isActive: true,
-    featured: false
+    featured: false,
+    options: []
   },
   {
     id: "weekday-lunch",
@@ -80,7 +84,8 @@ export const deals: Deal[] = [
       endHour: 15
     },
     isActive: true,
-    featured: true
+    featured: true,
+    options: []
   },
   {
     id: "late-night",
@@ -96,6 +101,7 @@ export const deals: Deal[] = [
       endHour: 2
     },
     isActive: true,
-    featured: false
+    featured: false,
+    options: []
   }
 ]; 

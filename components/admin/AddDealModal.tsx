@@ -11,6 +11,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import { db, storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-hot-toast';
+import { X } from 'lucide-react';
 
 interface AddDealModalProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ export function AddDealModal({ isOpen, onClose, onSuccess }: AddDealModalProps) 
   const [featured, setFeatured] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [options, setOptions] = useState<string[]>([]);
+  const [newOption, setNewOption] = useState('');
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,6 +42,17 @@ export function AddDealModal({ isOpen, onClose, onSuccess }: AddDealModalProps) 
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleAddOption = () => {
+    if (newOption.trim()) {
+      setOptions(prev => [...prev, newOption.trim()]);
+      setNewOption('');
+    }
+  };
+
+  const handleRemoveOption = (indexToRemove: number) => {
+    setOptions(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,6 +76,7 @@ export function AddDealModal({ isOpen, onClose, onSuccess }: AddDealModalProps) 
         isActive,
         featured,
         imageUrl,
+        options,
         validityRules: {
           type: 'always'
         },
@@ -127,6 +142,38 @@ export function AddDealModal({ isOpen, onClose, onSuccess }: AddDealModalProps) 
           onChange={(e) => setTerms(e.target.value)} 
           required
         />
+        <div className="space-y-2">
+          <Label>Deal Options</Label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add option (e.g., 'Large Pizza')"
+              value={newOption}
+              onChange={(e) => setNewOption(e.target.value)}
+            />
+            <Button 
+              type="button"
+              onClick={handleAddOption}
+              variant="secondary"
+            >
+              Add
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {options.map((option, index) => (
+              <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                <span>{option}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRemoveOption(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Switch 

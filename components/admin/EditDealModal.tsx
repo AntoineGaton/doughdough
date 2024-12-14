@@ -26,6 +26,8 @@ export function EditDealModal({ isOpen, onClose, onSuccess, item }: EditDealModa
   const [terms, setTerms] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [featured, setFeatured] = useState(false);
+  const [options, setOptions] = useState<string[]>([]);
+  const [newOption, setNewOption] = useState('');
 
   useEffect(() => {
     if (item) {
@@ -36,8 +38,20 @@ export function EditDealModal({ isOpen, onClose, onSuccess, item }: EditDealModa
       setTerms(item.terms || '');
       setIsActive(item.isActive ?? true);
       setFeatured(item.featured ?? false);
+      setOptions(item.options || []);
     }
   }, [item]);
+
+  const handleAddOption = () => {
+    if (newOption.trim()) {
+      setOptions(prev => [...prev, newOption.trim()]);
+      setNewOption('');
+    }
+  };
+
+  const handleRemoveOption = (indexToRemove: number) => {
+    setOptions(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +65,7 @@ export function EditDealModal({ isOpen, onClose, onSuccess, item }: EditDealModa
         terms,
         isActive,
         featured,
+        options,
         updatedAt: new Date()
       });
       toast.success('Deal updated successfully');
@@ -69,11 +84,13 @@ export function EditDealModal({ isOpen, onClose, onSuccess, item }: EditDealModa
           placeholder="Deal Title" 
           value={title} 
           onChange={(e) => setTitle(e.target.value)} 
+          required
         />
         <Input 
-          placeholder="Discount (e.g., 20% or BOGO)" 
+          placeholder="Discount" 
           value={discount} 
           onChange={(e) => setDiscount(e.target.value)} 
+          required
         />
         <Input 
           placeholder="Price" 
@@ -81,17 +98,51 @@ export function EditDealModal({ isOpen, onClose, onSuccess, item }: EditDealModa
           step="0.01" 
           value={price} 
           onChange={(e) => setPrice(e.target.value)} 
+          required
         />
         <Textarea 
           placeholder="Description" 
           value={description} 
           onChange={(e) => setDescription(e.target.value)} 
+          required
         />
         <Textarea 
-          placeholder="Terms and Conditions" 
+          placeholder="Terms" 
           value={terms} 
           onChange={(e) => setTerms(e.target.value)} 
+          required
         />
+
+        <div className="space-y-2">
+          <Label>Deal Options</Label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add option (e.g., 'Large Pizza')"
+              value={newOption}
+              onChange={(e) => setNewOption(e.target.value)}
+            />
+            <Button 
+              type="button"
+              onClick={handleAddOption}
+            >
+              Add
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            {options.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <span>{option}</span>
+                <Button 
+                  type="button"
+                  onClick={() => handleRemoveOption(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Switch 

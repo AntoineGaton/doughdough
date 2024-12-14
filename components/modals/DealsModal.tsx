@@ -6,6 +6,8 @@ import { db } from "@/lib/firebase";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, Clock } from "lucide-react";
+import { DealOrderModal } from "./DealOrderModal";
+import { Button } from "@/components/ui/button";
 
 interface DealsModalProps {
   isOpen: boolean;
@@ -16,6 +18,8 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  const [isDealOrderModalOpen, setIsDealOrderModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchDeals = async () => {
@@ -50,65 +54,89 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
     }
   }, [isOpen]);
 
+  const handleDealSelect = (deal: Deal) => {
+    setSelectedDeal(deal);
+    setIsDealOrderModalOpen(true);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Current Deals & Promotions</DialogTitle>
-        </DialogHeader>
-        
-        {loading && (
-          <div className="flex justify-center items-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-red-500 text-center py-4">
-            {error}
-          </div>
-        )}
-
-        {!loading && !error && deals.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No active deals at the moment.
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          {deals.map((deal) => (
-            <div key={deal.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative h-48">
-                <Image
-                  src={deal.imageUrl}
-                  alt={deal.title}
-                  fill
-                  className="object-cover"
-                />
-                <Badge className="absolute top-4 left-4 bg-red-600">
-                  {deal.discount}
-                </Badge>
-                {deal.featured && (
-                  <Badge className="absolute top-4 right-4 bg-yellow-500">
-                    Featured
-                  </Badge>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
-                <p className="text-gray-600 mb-4">{deal.description}</p>
-                {deal.validityRules.type === "date" && (
-                  <div className="flex items-center text-sm text-gray-500">
-                    <CalendarDays className="h-4 w-4 mr-2" />
-                    <span>Valid on {deal.validityRules.month}/{deal.validityRules.day}</span>
-                  </div>
-                )}
-                <p className="text-xs text-gray-500 mt-2">{deal.terms}</p>
-              </div>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Current Deals & Promotions</DialogTitle>
+          </DialogHeader>
+          
+          {loading && (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-          ))}
-        </div>
-      </DialogContent>
-    </Dialog>
+          )}
+
+          {error && (
+            <div className="text-red-500 text-center py-4">
+              {error}
+            </div>
+          )}
+
+          {!loading && !error && deals.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No active deals at the moment.
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            {deals.map((deal) => (
+              <div key={deal.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="relative h-48">
+                  <Image
+                    src={deal.imageUrl}
+                    alt={deal.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <Badge className="absolute top-4 left-4 bg-red-600">
+                    {deal.discount}
+                  </Badge>
+                  {deal.featured && (
+                    <Badge className="absolute top-4 right-4 bg-yellow-500">
+                      Featured
+                    </Badge>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
+                  <p className="text-gray-600 mb-4">{deal.description}</p>
+                  {deal.validityRules.type === "date" && (
+                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <CalendarDays className="h-4 w-4 mr-2" />
+                      <span>Valid on {deal.validityRules.month}/{deal.validityRules.day}</span>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mb-4">{deal.terms}</p>
+                  <Button 
+                    onClick={() => handleDealSelect(deal)}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    Order Now - ${deal.price}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {selectedDeal && (
+        <DealOrderModal
+          isOpen={isDealOrderModalOpen}
+          onClose={() => {
+            setIsDealOrderModalOpen(false);
+            setSelectedDeal(null);
+          }}
+          deal={selectedDeal}
+        />
+      )}
+    </>
   );
 } 

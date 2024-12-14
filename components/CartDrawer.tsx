@@ -4,26 +4,16 @@ import { VisuallyHidden } from "../components/ui/visually-hidden";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { CheckoutButton } from "./CheckoutButton";
+import { CartItem } from "./cart/CartItem";
+import { CartSummary } from "./cart/CartSummary";
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity?: number;
-  image?: string;
-}
-
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, itemCount, removeItem } = useCart();
-
-  const total = items.reduce((sum, item) => {
-    return sum + (item.price * (item.quantity || 1));
-  }, 0);
+  const { items, itemCount } = useCart();
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
@@ -64,29 +54,20 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             ) : (
               <div className="px-6">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center py-4 border-b">
-                    <div className="flex-1">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <p className="font-medium">${item.price}</p>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
+                  <CartItem key={item.id} item={item} />
                 ))}
 
-                <div className="border-t pt-4 mt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-bold text-lg">Total:</span>
-                    <span className="font-bold text-lg">${total.toFixed(2)}</span>
+                <div className="mt-4">
+                  <CartSummary />
+                  <div className="mt-4">
+                    <CheckoutButton 
+                      items={items} 
+                      total={items.reduce((sum, item) => 
+                        sum + (item.total * (item.quantity || 1)), 
+                        0
+                      )} 
+                    />
                   </div>
-                  <CheckoutButton items={items} total={total} />
                 </div>
               </div>
             )}

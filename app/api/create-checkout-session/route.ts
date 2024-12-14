@@ -2,9 +2,16 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { adminDb } from '../../../lib/firebase-admin';
 
+// Explicitly declare the domain
+const domain = process.env.NEXT_PUBLIC_BASE_URL;
+
+if (!domain) {
+  throw new Error('NEXT_PUBLIC_BASE_URL is not defined');
+}
+
 export async function POST(req: Request) {
   try {
-    const { items, userId, customerName } = await req.json();
+    const { items, userId, customerEmail } = await req.json();
     
     if (!items?.length) {
       return NextResponse.json(
@@ -13,21 +20,23 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create the order in Firestore first
+    // Add console.log to debug URLs
+    console.log('Domain:', domain);
+    console.log('Success URL:', `${domain}/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=test`);
+
     const orderRef = await adminDb.collection('orders').add({
       userId: userId || 'guest',
       items,
-      status: 'completed',
-      customerName: userId ? customerName : 'Guest',
+      status: 'pending',
+      customerEmail: customerEmail || 'Guest',
       currentStage: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
       total: items.reduce((sum: number, item: any) => 
-        sum + (item.price * (item.quantity || 1)), 0
+        sum + (item.total * (item.quantity || 1)), 0
       )
     });
 
-    // Then create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -36,28 +45,30 @@ export async function POST(req: Request) {
           currency: 'usd',
           product_data: {
             name: item.name,
-            images: [item.image || '/fallback-pizza.jpg'],
+            images: item.image?.startsWith('http') ? [item.image] : [],
           },
-          unit_amount: Math.round(item.price * 100),
+          unit_amount: Math.round(item.total * 100),
         },
         quantity: item.quantity || 1,
       })),
       metadata: {
-        orderId: orderRef.id // Add orderId to metadata
+        orderId: orderRef.id
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cart`,
+      success_url: `${domain}/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`,
+      cancel_url: `${domain}/cart`,
     });
 
     return NextResponse.json({ 
       sessionId: session.id,
       orderId: orderRef.id
     });
+    
   } catch (error) {
-    console.error('Detailed error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error creating checkout session' },
-      { status: 500 }
-    );
+    console.error('Checkout error:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Error creating checkout session' 
+    }, { 
+      status: 500 
+    });
   }
 } 
