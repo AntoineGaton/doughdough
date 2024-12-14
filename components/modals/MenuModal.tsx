@@ -121,10 +121,14 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                     <CardContent>
                       <Button 
                         onClick={() => {
-                          addToCart(pizza);
+                          addToCart({
+                            ...pizza,
+                            tax: pizza.price * 0.1,
+                            total: pizza.price * 1.1
+                          });
                           toast.success(`Added ${pizza.name} to cart`);
                         }}
-                        className="w-full"
+                        className="w-full bg-secondary hover:bg-secondary/80"
                       >
                         Add to Cart
                       </Button>
@@ -161,10 +165,14 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                     <CardContent>
                       <Button 
                         onClick={() => {
-                          addToCart(side);
+                          addToCart({
+                            ...side,
+                            tax: side.price * 0.1,
+                            total: side.price * 1.1
+                          });
                           toast.success(`Added ${side.name} to cart`);
                         }}
-                        className="w-full"
+                        className="w-full bg-secondary hover:bg-secondary/80"
                       >
                         Add to Cart
                       </Button>
@@ -183,12 +191,13 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                 {drinks.map((drink) => (
                   <Card key={drink.id} className="overflow-hidden">
-                    <div className="relative h-48">
+                    <div className="relative h-64 bg-transparent">
                       <Image
                         src={drink.image?.toString() || '/fallback-drink.jpg'}
                         alt={drink.name}
                         fill
-                        className="object-cover"
+                        className="object-contain p-4 mix-blend-multiply"
+                        style={{ backgroundColor: 'transparent' }}
                       />
                       <Badge className="absolute top-4 right-4 bg-white text-red-600">
                         ${drink.price}
@@ -201,10 +210,14 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                     <CardContent>
                       <Button 
                         onClick={() => {
-                          addToCart(drink);
+                          addToCart({
+                            ...drink,
+                            tax: drink.price * 0.1,
+                            total: drink.price * 1.1
+                          });
                           toast.success(`Added ${drink.name} to cart`);
                         }}
-                        className="w-full"
+                        className="w-full bg-secondary hover:bg-secondary/80"
                       >
                         Add to Cart
                       </Button>
