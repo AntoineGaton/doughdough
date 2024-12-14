@@ -147,8 +147,8 @@ export function BaseItemManager<T extends BaseItem>({
   return (
     <div className="container mx-auto p-4">
       <div className="bg-white rounded-lg shadow max-w-4xl mx-auto">
-        <div className="flex justify-between items-center sticky top-0 bg-white p-4 border-b bg-secondary">
-          <h3 className="text-xl font-semibold capitalize">{collectionName}</h3>
+        <div className="flex justify-between items-center sticky top-0 bg-secondary p-4 border-b bg-secondary">
+          <h3 className="text-xl font-semibold capitalize text-primary ml-2">{collectionName}</h3>
           <Button onClick={() => setIsAddModalOpen(true)}>
             Add New {collectionName.slice(0, -1)}
           </Button>
