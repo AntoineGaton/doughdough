@@ -19,6 +19,7 @@ import { MenuModal } from "./modals/MenuModal";
 import { ContactModal } from "./modals/ContactModal";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { UserCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -164,8 +165,16 @@ export function NavBar() {
 
       {/* Mobile Menu */}
       <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <DrawerContent className="fixed inset-x-0 top-[65px] sm:top-[600px] min-w-[320px]">
-          <div className="bg-primary max-h-600px sm:max-h-300px overflow-y-auto">
+        <DrawerContent 
+          className={cn(
+            "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary overflow-y-auto",
+            {
+              "h-[40vh]": activeView === "track",
+              "h-[30vh]": !activeView
+            }
+          )}
+        >
+          <div>
             <AnimatePresence mode="wait">
               {!activeView ? (
                 <motion.div
