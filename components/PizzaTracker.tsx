@@ -10,6 +10,8 @@ import { db } from "@/lib/firebase"
 import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
 import { MenuModal } from "@/components/modals/MenuModal"
 import { Drawer } from "@/components/ui/drawer"
+import { useTrackingDrawer } from '@/hooks/useTrackingDrawer';
+import { useRouter } from 'next/navigation';
 
 interface PizzaTrackerProps {
   onClose?: () => void;
@@ -36,6 +38,8 @@ export default function PizzaTracker({ onClose }: PizzaTrackerProps) {
   const { status, setStage, resetTracking } = useOrderTracking()
   const [isRainbow, setIsRainbow] = useState(false)
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
+  const { closeTrackingDrawer } = useTrackingDrawer();
+  const router = useRouter();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -82,14 +86,15 @@ export default function PizzaTracker({ onClose }: PizzaTrackerProps) {
     
     // Close any open drawers
     onClose?.();
+    closeTrackingDrawer();
     
-    // Navigate to home page with deals section
-    document.getElementById('featured-section')?.scrollIntoView({ behavior: 'smooth' });
+    // Navigate to home page and scroll to featured section
+    router.push('/#featured-section');
   }
 
   if (status.currentStage === 0 && !status.isComplete) {
     return (
-      <div className="w-full max-w-3xl mx-auto p-6 bg-secondary rounded-xl shadow-xl">
+      <div className="w-full max-w-3xl mx-auto p-6 bg-primary rounded-xl">
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Image
@@ -100,10 +105,10 @@ export default function PizzaTracker({ onClose }: PizzaTrackerProps) {
               className="opacity-80"
             />
           </div>
-          <h2 className="text-2xl font-bold text-primary mb-2">
+          <h2 className="text-2xl font-bold text-secondary mb-2">
             No Active Orders
           </h2>
-          <p className="text-primary/80">
+          <p className="text-secondary/80">
             Place an order to start tracking your pizza&apos;s journey!
           </p>
         </div>

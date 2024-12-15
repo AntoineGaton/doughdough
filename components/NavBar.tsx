@@ -22,6 +22,7 @@ import { UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOrderTracking } from '@/hooks/useOrderTracking';
 import { useTrackingDrawer } from '@/hooks/useTrackingDrawer';
+import { set } from "zod";
 
 export function NavBar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -34,7 +35,7 @@ export function NavBar() {
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const { status } = useOrderTracking();
-  const { isOpen, activeView, setActiveView, closeTrackingDrawer } = useTrackingDrawer();
+  const { isOpen, activeView, setActiveView, closeTrackingDrawer, openTrackingDrawer } = useTrackingDrawer();
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -101,15 +102,18 @@ export function NavBar() {
           {/* Left - Menu Button - Fixed width */}
           <div className="w-[100px] sm:w-[120px] flex justify-start">
             <button
-              onClick={() => setActiveView(null)}
+              onClick={() => {
+                if (activeView) {
+                  setActiveView(null);
+                } else {
+                  openTrackingDrawer();
+                  setActiveView(null);
+                }
+              }}
               className="bg-primary h-[65px] sm:h-[81px] text-secondary hover:text-black flex items-center p-0"
               aria-label={activeView ? "Close menu" : "Open menu"}
             >
-              {activeView ? (
-                <X className="h-6 w-6 sm:h-8 sm:w-8" />
-              ) : (
-                <MenuIcon className="h-6 w-6 sm:h-8 sm:w-8" />
-              )}
+              <MenuIcon className="h-6 w-6 sm:h-8 sm:w-8" />
             </button>
           </div>
 

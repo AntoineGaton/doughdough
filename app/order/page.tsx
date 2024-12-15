@@ -15,7 +15,7 @@ export default function OrderPage() {
 
   // Otherwise show the "No Active Orders" view
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 bg-secondary">
       <Image
         src="/images/main-logo.jpg"
         alt="DoughDough's Pizza"
