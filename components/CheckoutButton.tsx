@@ -99,7 +99,6 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
         }}
         onSignup={() => {
           setShowGuestModal(false);
-          // Implement your signup logic here
         }}
       />
     </>

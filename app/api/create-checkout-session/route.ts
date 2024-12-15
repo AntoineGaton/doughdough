@@ -20,10 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Add console.log to debug URLs
-    console.log('Domain:', domain);
-    console.log('Success URL:', `${domain}/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=test`);
-
+    // First create the order
     const orderRef = await adminDb.collection('orders').add({
       userId: userId || 'guest',
       items,
@@ -36,6 +33,11 @@ export async function POST(req: Request) {
         sum + (item.total * (item.quantity || 1)), 0
       )
     });
+
+    // Then log the URLs
+    console.log('Domain:', domain);
+    console.log('Success URL:', new URL(`/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`, domain).toString());
+    console.log('Cancel URL:', new URL('/cart', domain).toString());
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -54,8 +56,8 @@ export async function POST(req: Request) {
       metadata: {
         orderId: orderRef.id
       },
-      success_url: `${domain}/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`,
-      cancel_url: `${domain}/cart`,
+      success_url: new URL(`/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`, domain).toString(),
+      cancel_url: new URL('/cart', domain).toString(),
     });
 
     return NextResponse.json({ 
