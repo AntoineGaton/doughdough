@@ -67,13 +67,14 @@ export default function MobilePizzaTracker({ onClose }: MobilePizzaTrackerProps)
       <div className="w-full max-w-3xl mx-auto p-6 bg-primary rounded-xl">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <Image
-              src="/images/Doughdough/Doughdough.png"
-              alt="Pizzaria Logo"
-              width={200}
-              height={200}
-              className="opacity-80"
-            />
+            <div className="relative w-[200px] h-[200px]">
+              <Image
+                src="/images/logo.png"
+                alt="Pizza Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
           </div>
           <h2 className="text-2xl font-bold text-secondary mb-2">
             No Active Orders

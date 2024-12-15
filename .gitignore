@@ -33,7 +33,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
+# firebase seed
+utils/firebase-admin-seed.ts
 
 # firebase
 doughdough-cc6c5-firebase-adminsdk-1vl7k-e228428bda.json

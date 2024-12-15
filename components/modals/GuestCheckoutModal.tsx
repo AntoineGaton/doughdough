@@ -35,13 +35,13 @@ export function GuestCheckoutModal({
           </DialogTitle>
         </DialogHeader>
         
-        <div className="flex flex-col items-center space-y-4 pt-4">
+        <div className="flex flex-col items-center space-y-2">
           <Image
-            src="/images/logo2.png"
+            src="/images/Doughdough/3.png"
             alt="DoughDough's Logo"
-            width={100}
-            height={100}
-            className="rounded-full"
+            width={250}
+            height={250}
+            className="full"
           />
           
           <div className="space-y-2 w-full">

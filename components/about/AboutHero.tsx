@@ -32,7 +32,7 @@ export function AboutHero() {
               staggerChildren: 0.1
             }}
           >
-            {Array.from("Crafting Perfect Pizza Since 2020").map((char, index) => (
+            {Array.from("Crafting Perfect Pizza Since 2024").map((char, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0 }}
