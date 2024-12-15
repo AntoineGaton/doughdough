@@ -20,11 +20,11 @@ import { ContactModal } from "./modals/ContactModal";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useOrderTracking } from '@/hooks/useOrderTracking';
+import { useTrackingDrawer } from '@/hooks/useTrackingDrawer';
 
 export function NavBar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [activeView, setActiveView] = useState<string | null>(null);
   const [rgbValues, setRgbValues] = useState({ r: 0, g: 0, b: 0 });
   const { itemCount } = useCart();
   const pathname = usePathname();
@@ -33,6 +33,8 @@ export function NavBar() {
   const [isDealsModalOpen, setIsDealsModalOpen] = useState(false);
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const { status } = useOrderTracking();
+  const { isOpen, activeView, setActiveView, closeTrackingDrawer } = useTrackingDrawer();
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -68,26 +70,26 @@ export function NavBar() {
       setActiveView("track");
     } else if (item.id === "deals") {
       setIsDealsModalOpen(true);
-      setIsMenuOpen(false);
+      setActiveView(null);
     } else if (item.id === "menu" || item.href === "/menu") {
       setIsMenuModalOpen(true);
-      setIsMenuOpen(false);
+      setActiveView(null);
     } else if (item.id === "contact") {
       setIsContactModalOpen(true);
-      setIsMenuOpen(false);
+      setActiveView(null);
     } else if (item.href && item.href !== "/menu") {
       window.location.href = item.href;
-      setIsMenuOpen(false);
+      setActiveView(null);
     }
   };
 
   const renderTrackOrder = () => (
     <div className="px-4 py-2">
       <div className="hidden md:block">
-        <PizzaTracker />
+        <PizzaTracker onClose={() => setActiveView(null)} />
       </div>
       <div className="block md:hidden">
-        <MobilePizzaTracker />
+        <MobilePizzaTracker onClose={() => setActiveView(null)} />
       </div>
     </div>
   );
@@ -99,11 +101,11 @@ export function NavBar() {
           {/* Left - Menu Button - Fixed width */}
           <div className="w-[100px] sm:w-[120px] flex justify-start">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setActiveView(null)}
               className="bg-primary h-[65px] sm:h-[81px] text-secondary hover:text-black flex items-center p-0"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={activeView ? "Close menu" : "Open menu"}
             >
-              {isMenuOpen ? (
+              {activeView ? (
                 <X className="h-6 w-6 sm:h-8 sm:w-8" />
               ) : (
                 <MenuIcon className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -164,12 +166,13 @@ export function NavBar() {
       </div>
 
       {/* Mobile Menu */}
-      <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+      <Drawer open={isOpen} onOpenChange={(open) => !open && closeTrackingDrawer()}>
         <DrawerContent 
           className={cn(
             "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary",
             {
-              "h-[40vh]": activeView === "track",
+              "h-[40vh]": activeView === "track" && !status.isComplete,
+              "h-[45vh]": activeView === "track" && status.isComplete,
               "h-[30vh]": !activeView
             }
           )}

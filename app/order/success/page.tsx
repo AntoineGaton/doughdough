@@ -1,24 +1,23 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 import { useOrderTracking } from '@/hooks/useOrderTracking';
+import { useTrackingDrawer } from '@/hooks/useTrackingDrawer';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import PizzaTracker from '@/components/PizzaTracker';
 
 export default function OrderSuccessPage() {
-  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
   const { setStage, resetTracking } = useOrderTracking();
-  
+  const { openTrackingDrawer } = useTrackingDrawer();
+
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
     const orderId = searchParams.get('order_id');
@@ -47,10 +46,16 @@ export default function OrderSuccessPage() {
     };
 
     initializeOrder();
+  }, [setStage]);
+
+  useEffect(() => {
+    return () => {
+      resetTracking();
+    };
   }, []);
 
   const handleTrackOrder = () => {
-    setIsTrackingOpen(true);
+    openTrackingDrawer();
   };
 
   return (
@@ -79,24 +84,19 @@ export default function OrderSuccessPage() {
                 Track Your Order
               </button>
               <Link 
-                href="/"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleTrackOrder();
+                }}
                 className="text-sm text-muted-foreground hover:text-primary"
               >
-                Return to Home
+                Return to Track Order
               </Link>
             </div>
           </div>
         </div>
       </div>
-      <Drawer open={isTrackingOpen} onOpenChange={setIsTrackingOpen}>
-        <DrawerContent className="min-w-[320px]">
-          <div className="bg-primary h-[85vh] flex flex-col">
-            <div className="mx-auto w-full max-w-sm flex-1 overflow-hidden">
-              <PizzaTracker />
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
     </>
   );
 } 

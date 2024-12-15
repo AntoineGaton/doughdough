@@ -6,6 +6,10 @@ import { motion } from "framer-motion"
 import confetti from 'canvas-confetti'
 import { useOrderTracking } from '@/hooks/useOrderTracking'
 
+interface MobilePizzaTrackerProps {
+  onClose?: () => void;
+}
+
 const CIRCLE_CENTER = 120
 const CIRCLE_RADIUS = 80
 const STAGES = [
@@ -16,7 +20,7 @@ const STAGES = [
   { icon: CheckCircle, label: "Delivered!" },
 ]
 
-export default function MobilePizzaTracker() {
+export default function MobilePizzaTracker({ onClose }: MobilePizzaTrackerProps) {
   const { status, setStage, setProgress } = useOrderTracking()
   
   useEffect(() => {
