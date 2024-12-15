@@ -19,8 +19,8 @@ export default function OrderSuccessPage() {
   const { openTrackingDrawer } = useTrackingDrawer();
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id');
-    const orderId = searchParams.get('order_id');
+    const sessionId = searchParams?.get('session_id');
+    const orderId = searchParams?.get('order_id');
     
     if (!sessionId || !orderId) {
       router.push('/');
