@@ -437,36 +437,73 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
               )}
 
               {deal.id === "christmas-special" && (
-                <div className="space-y-2">
-                  <p className="font-semibold">Select 2 Pizzas (Second one FREE!):</p>
-                  <div className="grid grid-cols-1 gap-2">
-                    {menuItems.pizzas.map((pizza) => (
-                      <div 
-                        key={pizza.id}
-                        className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
-                        onClick={() => {
-                          if (selectedOptions.pizzas.includes(pizza.id)) {
-                            setSelectedOptions(prev => ({
-                              ...prev,
-                              pizzas: prev.pizzas.filter(id => id !== pizza.id)
-                            }));
-                          } else if (selectedOptions.pizzas.length < 2) {
-                            setSelectedOptions(prev => ({
-                              ...prev,
-                              pizzas: [...prev.pizzas, pizza.id]
-                            }));
-                          }
-                        }}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-4 h-4 border rounded-sm ${
-                            selectedOptions.pizzas.includes(pizza.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
-                          }`} />
-                          <span>{pizza.name}</span>
-                        </div>
-                        <span>${pizza.price}</span>
+                <div className="max-h-[60vh] overflow-y-auto pr-2">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select Pizza:</p>
+                      <div className="grid grid-cols-1 gap-2">
+                        {menuItems.pizzas.map((pizza) => (
+                          <div 
+                            key={pizza.id}
+                            className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                              if (selectedOptions.pizzas.includes(pizza.id)) {
+                                setSelectedOptions(prev => ({
+                                  ...prev,
+                                  pizzas: prev.pizzas.filter(id => id !== pizza.id)
+                                }));
+                              } else if (selectedOptions.pizzas.length < 2) {
+                                setSelectedOptions(prev => ({
+                                  ...prev,
+                                  pizzas: [...prev.pizzas, pizza.id]
+                                }));
+                              }
+                            }}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <div className={`w-4 h-4 border rounded-sm ${
+                                selectedOptions.pizzas.includes(pizza.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                              }`} />
+                              <span>{pizza.name}</span>
+                            </div>
+                            <span>${pizza.price}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select Drinks:</p>
+                      <div className="grid grid-cols-1 gap-2">
+                        {menuItems.drinks.map((drink) => (
+                          <div 
+                            key={drink.id}
+                            className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                            onClick={() => {
+                              if (selectedOptions.drinks.includes(drink.id)) {
+                                setSelectedOptions(prev => ({
+                                  ...prev,
+                                  drinks: prev.drinks.filter(id => id !== drink.id)
+                                }));
+                              } else if (selectedOptions.drinks.length < 2) {
+                                setSelectedOptions(prev => ({
+                                  ...prev,
+                                  drinks: [...prev.drinks, drink.id]
+                                }));
+                              }
+                            }}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <div className={`w-4 h-4 border rounded-sm ${
+                                selectedOptions.drinks.includes(drink.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                              }`} />
+                              <span>{drink.name}</span>
+                            </div>
+                            <span>${drink.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -725,7 +762,7 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
                     : 'block'
                 }}
               >
-                Add to Cart - ${calculateDealPrice().total.toFixed(2)}
+                {isDealValid() ? `Add to Cart - $${calculateDealPrice().total.toFixed(2)}` : 'Make your choices and get your deal!'}
               </Button>
             </div>
           )}

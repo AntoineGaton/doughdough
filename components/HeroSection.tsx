@@ -2,9 +2,11 @@
 
 import { MapPin, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export function HeroSection() {
-  const heroVideo = "videos/hero-video.mp4";
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const videoSrc = isMobile ? "videos/mobile-hero-video.mp4" : "videos/hero-video.mp4";
 
   const scrollToNext = () => {
     const nextSection = document.getElementById('featured-section');
@@ -19,13 +21,9 @@ export function HeroSection() {
           loop
           muted
           playsInline
-          className="w-full h-full object-cover
-            xs:object-[center_center] xs:scale-[1.8]
-            sm:object-[center_center] sm:scale-[1.5] 
-            md:object-[center_center] md:scale-[1.2] 
-            lg:object-cover lg:scale-100"
+          className="w-full h-full object-cover"
         >
-          <source src={heroVideo} type="video/mp4" />
+          <source src={videoSrc} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/30" />
       </div>

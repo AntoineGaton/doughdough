@@ -72,15 +72,19 @@ export function NavBar() {
     } else if (item.id === "deals") {
       setIsDealsModalOpen(true);
       setActiveView(null);
+      closeTrackingDrawer();
     } else if (item.id === "menu" || item.href === "/menu") {
       setIsMenuModalOpen(true);
       setActiveView(null);
+      closeTrackingDrawer();
     } else if (item.id === "contact") {
       setIsContactModalOpen(true);
       setActiveView(null);
+      closeTrackingDrawer();
     } else if (item.href && item.href !== "/menu") {
       window.location.href = item.href;
       setActiveView(null);
+      closeTrackingDrawer();
     }
   };
 
@@ -173,15 +177,15 @@ export function NavBar() {
       <Drawer open={isOpen} onOpenChange={(open) => !open && closeTrackingDrawer()}>
         <DrawerContent 
           className={cn(
-            "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary",
+            "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary overflow-hidden",
             {
-              "h-[40vh]": activeView === "track" && !status.isComplete,
-              "h-[45vh]": activeView === "track" && status.isComplete,
-              "h-[30vh]": !activeView
+              "h-[60vh] md:h-[40vh]": activeView === "track" && !status.isComplete,
+              "h-[65vh] md:h-[45vh]": activeView === "track" && status.isComplete,
+              "h-[50vh] md:h-[30vh]": !activeView
             }
           )}
         >
-          <div>
+          <div className="overflow-hidden">
             <AnimatePresence mode="wait">
               {!activeView ? (
                 <motion.div

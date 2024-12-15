@@ -98,7 +98,7 @@ export default function PizzaTracker({ onClose }: PizzaTrackerProps) {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/images/logo2.png"
+              src="/images/main-logo.jpg"
               alt="Pizzaria Logo"
               width={200}
               height={200}

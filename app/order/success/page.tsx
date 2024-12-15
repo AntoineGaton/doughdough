@@ -59,40 +59,42 @@ export default function OrderSuccessPage() {
   };
 
   return (
-    <>
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-20 text-center">
-        <div className="space-y-[-90px]">
-          <div className="relative w-[800px] h-[800px] mx-auto">
-            <Image
-              src="/images/order-success.png"
-              alt="DoughDough's Pizza"
-              fill
-              priority
-              className="object-contain"
-            />
-          </div>
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-green-600">Order Confirmed!</h1>
-            <p className="text-xl text-muted-foreground">
-              Thank you for ordering from DoughDough's Pizza
-            </p>
-            <div className="flex flex-col gap-4 mt-8">
-              <button 
-                onClick={handleTrackOrder}
-                className="bg-secondary text-white px-6 py-3 rounded-md font-bold hover:bg-secondary/90 transition-colors"
-              >
-                Track Your Order
-              </button>
-              <Link 
-                href="/"
-                className="text-sm text-muted-foreground hover:text-primary"
-              >
-                Return back to home
-              </Link>
-            </div>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 md:p-20 text-center">
+      <div className="w-full max-w-md mx-auto">
+        <div className="relative aspect-square w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] mx-auto mb-4">
+          <Image
+            src="/images/order-success.png"
+            alt="DoughDough's Pizza"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
+        
+        <div className="space-y-4 mt-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">
+            Order Confirmed!
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
+            Thank you for ordering from DoughDough's Pizza
+          </p>
+          
+          <div className="flex flex-col gap-3 mt-6">
+            <button 
+              onClick={handleTrackOrder}
+              className="w-full bg-secondary text-white px-4 py-3 rounded-md font-bold hover:bg-secondary/90 transition-colors text-sm sm:text-base"
+            >
+              Track Your Order
+            </button>
+            <Link 
+              href="/"
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              Return back to home
+            </Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 } 
