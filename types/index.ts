@@ -46,4 +46,21 @@ export interface Deal extends BaseItem {
     endHour?: number;
     days?: number[];
   };
-} 
+}
+
+type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  tax: number;
+  total: number;
+  description: string;
+  selectedItems?: {
+    pizzas: string[];
+    sides: string[];
+    drinks: string[];
+    school?: string;
+    details: string[];
+  };
+  isDeal: boolean;
+}; 

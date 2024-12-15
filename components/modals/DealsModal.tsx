@@ -135,14 +135,16 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
       </Dialog>
 
       {selectedDeal && (
-        <DealOrderModal
-          isOpen={isDealOrderModalOpen}
-          onClose={() => {
-            setIsDealOrderModalOpen(false);
-            setSelectedDeal(null);
-          }}
-          deal={selectedDeal}
-        />
+        <div className="relative z-[100]">
+          <DealOrderModal
+            isOpen={isDealOrderModalOpen}
+            onClose={() => {
+              setIsDealOrderModalOpen(false);
+              setSelectedDeal(null);
+            }}
+            deal={selectedDeal}
+          />
+        </div>
       )}
     </>
   );

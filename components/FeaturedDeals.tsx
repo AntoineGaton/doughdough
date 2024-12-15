@@ -21,6 +21,20 @@ type Deal = {
   discount?: string;
 }
 
+type DealOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  deal: {
+    id: string;
+    title: string;
+    price: number;
+    options: string[];
+    description: string;
+    terms: string;
+    discount?: string;
+  };
+};
+
 export function FeaturedDeals() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +93,7 @@ export function FeaturedDeals() {
         {deals.map((deal) => (
           <div 
             key={deal.id}
-            className="group bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]"
+            className="group bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
           >
             <div className="relative h-48 w-full">
               <Image
@@ -88,18 +102,16 @@ export function FeaturedDeals() {
                 fill
                 className="object-cover"
               />
-              {deal.discount && (
-                <div className="absolute top-4 right-4 bg-white text-red-600 px-3 py-1 rounded-full font-bold">
-                  {deal.discount}
-                </div>
-              )}
+              <div className="absolute top-4 left-4 bg-white text-red-600 px-3 py-1 rounded-full font-bold">
+                {deal.discount}
+              </div>
             </div>
-            <div className="p-4">
+            <div className="p-4 flex flex-col flex-grow">
               <h3 className="text-xl font-bold text-gray-900 mb-2">{deal.title}</h3>
               <p className="text-gray-600">{deal.description}</p>
               <button 
                 onClick={() => handleOrderNow(deal)}
-                className="mt-4 flex items-center text-red-600 font-semibold"
+                className="mt-auto pt-4 flex items-center text-red-600 font-semibold"
               >
                 Order Now <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
