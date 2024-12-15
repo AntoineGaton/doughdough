@@ -37,7 +37,7 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
   const [menuItems, setMenuItems] = useState<{
     pizzas: any[];
     sides: any[];
-    drinks: any[];
+    drinks: { id: string; name: string; price: number; }[];
   }>({
     pizzas: [],
     sides: [],
@@ -58,7 +58,10 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
         const sides = sidesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const drinksSnap = await getDocs(collection(db, 'drinks'));
-        const drinks = drinksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const drinks = drinksSnap.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data() 
+        } as { id: string; name: string; price: number; }));
 
         setMenuItems({ pizzas, sides, drinks });
 
@@ -144,7 +147,11 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+    <Dialog 
+      open={isOpen} 
+      onClose={onClose} 
+      className="relative z-50"
+    >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -167,25 +174,115 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
 
             {loading ? (
               <div className="flex justify-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
               </div>
             ) : (
-              <>
+              <div className="vh-full overflow-y-auto">
                 {deal.id === "family-feast" && (
-                  <>
-                    <div className="space-y-2">
-                      <p className="font-semibold">Select 2 Pizzas:</p>
-                      {/* Pizza selection */}
+                  <div className="max-h-[60vh] overflow-y-auto pr-2">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select 2 Pizzas:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {menuItems.pizzas.map((pizza) => (
+                            <div 
+                              key={pizza.id}
+                              className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                              onClick={() => {
+                                if (selectedOptions.pizzas.includes(pizza.id)) {
+                                  setSelectedOptions(prev => ({
+                                    ...prev,
+                                    pizzas: prev.pizzas.filter(id => id !== pizza.id)
+                                  }));
+                                } else if (selectedOptions.pizzas.length < 2) {
+                                  setSelectedOptions(prev => ({
+                                    ...prev,
+                                    pizzas: [...prev.pizzas, pizza.id]
+                                  }));
+                                }
+                              }}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <div className={`w-4 h-4 border rounded-sm ${
+                                  selectedOptions.pizzas.includes(pizza.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                                }`} />
+                                <span>{pizza.name}</span>
+                              </div>
+                              <span>${pizza.price}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select 2 Sides:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {menuItems.sides.map((side) => (
+                            <div 
+                              key={side.id}
+                              className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                              onClick={() => {
+                                if (selectedOptions.sides.includes(side.id)) {
+                                  setSelectedOptions(prev => ({
+                                    ...prev,
+                                    sides: prev.sides.filter(id => id !== side.id)
+                                  }));
+                                } else if (selectedOptions.sides.length < 2) {
+                                  setSelectedOptions(prev => ({
+                                    ...prev,
+                                    sides: [...prev.sides, side.id]
+                                  }));
+                                }
+                              }}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <div className={`w-4 h-4 border rounded-sm ${
+                                  selectedOptions.sides.includes(side.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                                }`} />
+                                <span>{side.name}</span>
+                              </div>
+                              <span>${side.price}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select 2L Drink:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {menuItems.drinks
+                            .filter(drink => drink.name.includes('2 Liter'))
+                            .map((drink) => (
+                              <div 
+                                key={drink.id}
+                                className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                                onClick={() => {
+                                  if (selectedOptions.drinks.includes(drink.id)) {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      drinks: prev.drinks.filter(id => id !== drink.id)
+                                    }));
+                                  } else {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      drinks: [drink.id]
+                                    }));
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <div className={`w-4 h-4 border rounded-sm ${
+                                    selectedOptions.drinks.includes(drink.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                                  }`} />
+                                  <span>{drink.name}</span>
+                                </div>
+                                <span>${drink.price}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <p className="font-semibold">Select 2 Sides:</p>
-                      {/* Sides selection */}
-                    </div>
-                    <div className="space-y-2">
-                      <p className="font-semibold">Included 2L Drink:</p>
-                      {/* Pre-selected 2L drink */}
-                    </div>
-                  </>
+                  </div>
                 )}
 
                 {deal.id === "christmas-special" && (
@@ -263,7 +360,7 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
                 >
                   Add to Cart - ${calculateDealPrice().total.toFixed(2)}
                 </Button>
-              </>
+              </div>
             )}
           </div>
         </Dialog.Panel>
