@@ -327,7 +327,81 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
                   </div>
                 )}
 
-                {/* Similar sections for other deal types */}
+                {deal.id === "weekday-lunch" && (
+                  <div className="max-h-[60vh] overflow-y-auto pr-2">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select Pizza:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {menuItems.pizzas
+                            .filter(pizza => pizza.name.toLowerCase().includes('cheese pizza'))
+                            .map((pizza) => (
+                              <div 
+                                key={pizza.id}
+                                className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                                onClick={() => {
+                                  if (selectedOptions.pizzas.includes(pizza.id)) {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      pizzas: []
+                                    }));
+                                  } else {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      pizzas: [pizza.id]
+                                    }));
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <div className={`w-4 h-4 border rounded-sm ${
+                                    selectedOptions.pizzas.includes(pizza.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                                  }`} />
+                                  <span>{pizza.name}</span>
+                                </div>
+                                <span>${pizza.price}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select 20oz Drink:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {menuItems.drinks
+                            .filter(drink => drink.name.includes('20 oz'))
+                            .map((drink) => (
+                              <div 
+                                key={drink.id}
+                                className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                                onClick={() => {
+                                  if (selectedOptions.drinks.includes(drink.id)) {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      drinks: []
+                                    }));
+                                  } else {
+                                    setSelectedOptions(prev => ({
+                                      ...prev,
+                                      drinks: [drink.id]
+                                    }));
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <div className={`w-4 h-4 border rounded-sm ${
+                                    selectedOptions.drinks.includes(drink.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                                  }`} />
+                                  <span>{drink.name}</span>
+                                </div>
+                                <span>${drink.price}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <Button
                   onClick={() => {
