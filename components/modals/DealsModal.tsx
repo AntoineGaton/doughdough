@@ -87,7 +87,7 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             {deals.map((deal) => (
-              <div key={deal.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div key={deal.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
                 <div className="relative h-48">
                   <Image
                     src={deal.imageUrl}
@@ -104,22 +104,29 @@ export function DealsModal({ isOpen, onClose }: DealsModalProps) {
                     </Badge>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
                   <p className="text-gray-600 mb-4">{deal.description}</p>
-                  {deal.validityRules.type === "date" && (
+                  {deal.validityRules.type === "date" ? (
                     <div className="flex items-center text-sm text-gray-500 mb-4">
                       <CalendarDays className="h-4 w-4 mr-2" />
                       <span>Valid on {deal.validityRules.month}/{deal.validityRules.day}</span>
                     </div>
+                  ) : (
+                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <CalendarDays className="h-4 w-4 mr-2" />
+                      <span>Valid thru {new Date().getFullYear() + 1}</span>
+                    </div>
                   )}
                   <p className="text-xs text-gray-500 mb-4">{deal.terms}</p>
-                  <Button 
-                    onClick={() => handleDealSelect(deal)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Order Now - ${deal.price}
-                  </Button>
+                  <div className="mt-auto">
+                    <Button 
+                      onClick={() => handleDealSelect(deal)}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      Order Now
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}

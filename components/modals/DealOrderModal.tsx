@@ -50,32 +50,36 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
     const fetchMenuItems = async () => {
       try {
         setLoading(true);
-        // Fetch pizzas
+        // Fetch all necessary menu items
         const pizzasSnap = await getDocs(collection(db, 'pizzas'));
         const pizzas = pizzasSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Fetch sides for the chocolate cake
         const sidesSnap = await getDocs(collection(db, 'sides'));
-        const sides = sidesSnap.docs.map(doc => ({ 
-          id: doc.id, 
-          name: doc.data().name,
-          ...doc.data() 
-        }));
+        const sides = sidesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // For Christmas deal, auto-select the chocolate cake
-        if (deal.discount === "2-FOR-1") {
-          const chocolateCake = sides.find(side => 
-            side.name.toLowerCase().includes('chocolate')
-          );
-          if (chocolateCake) {
+        const drinksSnap = await getDocs(collection(db, 'drinks'));
+        const drinks = drinksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        setMenuItems({ pizzas, sides, drinks });
+
+        // Pre-select items based on deal type
+        if (deal.id === "family-feast") {
+          const defaultDrink = drinks.find(drink => drink.name.includes('2 Liter'));
+          if (defaultDrink) {
             setSelectedOptions(prev => ({
               ...prev,
-              sides: [chocolateCake.id]
+              drinks: [defaultDrink.id]
+            }));
+          }
+        } else if (deal.id === "weekday-lunch") {
+          const defaultDrink = drinks.find(drink => drink.name.includes('20 oz'));
+          if (defaultDrink) {
+            setSelectedOptions(prev => ({
+              ...prev,
+              drinks: [defaultDrink.id]
             }));
           }
         }
-
-        setMenuItems({ pizzas, sides, drinks: [] });
       } catch (error) {
         console.error('Error fetching menu items:', error);
         toast.error('Failed to load menu items');
@@ -85,36 +89,58 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
     };
 
     fetchMenuItems();
-  }, [deal.discount]);
-
-  const calculateDealPrice = () => {
-    if (selectedOptions.pizzas.length === 2) {
-      const selectedPizzaPrices = selectedOptions.pizzas.map(pizzaId => {
-        const pizza = menuItems.pizzas.find(p => p.id === pizzaId);
-        return pizza ? pizza.price : 0;
-      });
-      const basePrice = Math.max(...selectedPizzaPrices);
-      const tax = basePrice * 0.13; // 13% tax
-      return {
-        basePrice,
-        tax,
-        total: basePrice + tax
-      };
-    }
-    return {
-      basePrice: deal.price,
-      tax: deal.price * 0.13,
-      total: deal.price * 1.13
-    };
-  };
+  }, [deal.id]);
 
   const isDealValid = () => {
-    switch (deal.discount) {
-      case "2-FOR-1":
+    switch (deal.id) {
+      case "christmas-special":
         return selectedOptions.pizzas.length === 2;
+      case "family-feast":
+        return selectedOptions.pizzas.length === 2 && 
+               selectedOptions.sides.length === 2 && 
+               selectedOptions.drinks.length === 1;
+      case "student-special":
+        return selectedOptions.pizzas.length === 1;
+      case "weekday-lunch":
+        return selectedOptions.pizzas.length === 1 && 
+               selectedOptions.drinks.length === 1;
+      case "late-night":
+        return selectedOptions.pizzas.length > 0;
       default:
         return false;
     }
+  };
+
+  const calculateDealPrice = () => {
+    let basePrice = deal.price;
+    
+    switch (deal.id) {
+      case "christmas-special": {
+        const selectedPizzaPrices = selectedOptions.pizzas.map(pizzaId => {
+          const pizza = menuItems.pizzas.find(p => p.id === pizzaId);
+          return pizza ? pizza.price : 0;
+        });
+        basePrice = Math.max(...selectedPizzaPrices);
+        break;
+      }
+      case "student-special": {
+        const pizza = menuItems.pizzas.find(p => p.id === selectedOptions.pizzas[0]);
+        basePrice = pizza ? pizza.price * 0.5 : deal.price;
+        break;
+      }
+      case "late-night": {
+        const pizza = menuItems.pizzas.find(p => p.id === selectedOptions.pizzas[0]);
+        basePrice = pizza ? pizza.price * 0.7 : deal.price;
+        break;
+      }
+    }
+
+    const tax = basePrice * 0.13;
+    return {
+      basePrice,
+      tax,
+      total: basePrice + tax
+    };
   };
 
   return (
@@ -145,50 +171,66 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
               </div>
             ) : (
               <>
-                {deal.discount === "2-FOR-1" && (
+                {deal.id === "family-feast" && (
                   <>
                     <div className="space-y-2">
                       <p className="font-semibold">Select 2 Pizzas:</p>
-                      {menuItems.pizzas.map((pizza) => (
-                        <label key={pizza.id} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedOptions.pizzas.includes(pizza.id)}
-                            onChange={() => {
-                              if (selectedOptions.pizzas.includes(pizza.id)) {
-                                setSelectedOptions(prev => ({
-                                  ...prev,
-                                  pizzas: prev.pizzas.filter(id => id !== pizza.id)
-                                }));
-                              } else if (selectedOptions.pizzas.length < 2) {
-                                setSelectedOptions(prev => ({
-                                  ...prev,
-                                  pizzas: [...prev.pizzas, pizza.id]
-                                }));
-                              }
-                            }}
-                            disabled={selectedOptions.pizzas.length >= 2 && !selectedOptions.pizzas.includes(pizza.id)}
-                            className="rounded border-gray-300 text-red-600 focus:ring-red-500"
-                          />
-                          <span>{pizza.name}</span>
-                        </label>
-                      ))}
+                      {/* Pizza selection */}
                     </div>
-
-                    <div className="space-y-2 bg-gray-50 p-3 rounded">
-                      <p className="font-semibold">Included in deal:</p>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={true}
-                          disabled={true}
-                          className="rounded border-blue-600 text-blue-600 focus:ring-blue-500 checked:bg-blue-600"
-                        />
-                        <span className="text-gray-700">Hot Lava Chocolate Cake</span>
-                      </div>
+                    <div className="space-y-2">
+                      <p className="font-semibold">Select 2 Sides:</p>
+                      {/* Sides selection */}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-semibold">Included 2L Drink:</p>
+                      {/* Pre-selected 2L drink */}
                     </div>
                   </>
                 )}
+
+                {deal.id === "christmas-special" && (
+                  <div className="space-y-2">
+                    <p className="font-semibold">Select 2 Pizzas (Second one FREE!):</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {menuItems.pizzas.map((pizza) => (
+                        <div 
+                          key={pizza.id}
+                          className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                          onClick={() => {
+                            if (selectedOptions.pizzas.includes(pizza.id)) {
+                              setSelectedOptions(prev => ({
+                                ...prev,
+                                pizzas: prev.pizzas.filter(id => id !== pizza.id)
+                              }));
+                            } else if (selectedOptions.pizzas.length < 2) {
+                              setSelectedOptions(prev => ({
+                                ...prev,
+                                pizzas: [...prev.pizzas, pizza.id]
+                              }));
+                            }
+                          }}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-4 h-4 border rounded-sm ${
+                              selectedOptions.pizzas.includes(pizza.id) ? 'bg-red-600 border-red-600' : 'border-gray-300'
+                            }`} />
+                            <span>{pizza.name}</span>
+                          </div>
+                          <span>${pizza.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {deal.id === "student-special" && (
+                  <div className="space-y-2">
+                    <p className="font-semibold">Select a Medium Pizza (50% off):</p>
+                    {/* Medium pizza selection */}
+                  </div>
+                )}
+
+                {/* Similar sections for other deal types */}
 
                 <Button
                   onClick={() => {

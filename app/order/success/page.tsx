@@ -84,14 +84,10 @@ export default function OrderSuccessPage() {
                 Track Your Order
               </button>
               <Link 
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleTrackOrder();
-                }}
+                href="/"
                 className="text-sm text-muted-foreground hover:text-primary"
               >
-                Return to Track Order
+                Return back to home
               </Link>
             </div>
           </div>
