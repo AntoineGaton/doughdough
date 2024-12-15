@@ -55,7 +55,8 @@ export default function OrderSuccessPage() {
   }, []);
 
   const handleTrackOrder = () => {
-    openTrackingDrawer();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    router.push(`${baseUrl}/order`);
   };
 
   return (
