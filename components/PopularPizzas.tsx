@@ -55,7 +55,12 @@ export function PopularPizzas() {
   }, []);
 
   const handlePizzaClick = (pizza: Pizza) => {
-    addToCart(pizza);
+    addToCart({
+      ...pizza,
+      tax: pizza.price * 0.13, // 13% tax
+      total: pizza.price * 1.13, // price + tax
+      isDeal: false
+    });
   };
 
   return (
@@ -79,8 +84,7 @@ export function PopularPizzas() {
             {pizzas.map((pizza) => (
               <div
                 key={pizza.id}
-                className="group bg-white rounded-lg shadow-md overflow-hidden hover-scale cursor-pointer"
-                onClick={() => handlePizzaClick(pizza)}
+                className="group bg-white rounded-lg shadow-md overflow-hidden hover-scale flex flex-col h-full"
               >
                 <div className="relative h-48 w-full">
                   <Image
@@ -94,10 +98,7 @@ export function PopularPizzas() {
                   </div>
                   {getItemQuantity(pizza.id) > 0 && (
                     <div 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeItem(pizza.id);
-                      }}
+                      onClick={() => removeItem(pizza.id)}
                       className="absolute top-4 left-4 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold cursor-pointer"
                     >
                       <span className="hover:hidden">{getItemQuantity(pizza.id)}</span>
@@ -105,9 +106,23 @@ export function PopularPizzas() {
                     </div>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{pizza.name}</h3>
                   <p className="text-gray-600 text-sm">{pizza.description}</p>
+                  <div className="mt-auto pt-4">
+                    <button
+                      onClick={() => handlePizzaClick(pizza)}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md font-semibold transition-colors duration-200 flex items-center justify-center"
+                    >
+                      {getItemQuantity(pizza.id) > 0 ? (
+                        <>
+                          Add Another
+                        </>
+                      ) : (
+                        'Add to Cart'
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

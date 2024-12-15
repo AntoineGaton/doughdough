@@ -514,48 +514,33 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
                     <div className="space-y-2">
                       <p className="font-semibold sticky top-0 bg-white py-2 z-10">Select School:</p>
                       <div className="relative">
-                        {selectedSchool ? (
-                          <div className="w-full p-2 border rounded-md flex justify-between items-center">
-                            <span>{selectedSchool}</span>
-                            <X 
-                              className="h-4 w-4 cursor-pointer hover:text-red-600" 
-                              onClick={() => {
-                                setSelectedSchool("");
-                                setSchoolSearch("");
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <input
-                            type="text"
-                            placeholder="Search for your school..."
-                            value={schoolSearch}
-                            onChange={(e) => setSchoolSearch(e.target.value)}
-                            className="w-full p-2 border rounded-md"
-                          />
-                        )}
-                        {!selectedSchool && schoolSearch && (
-                          <div className="absolute w-full mt-1 max-h-48 overflow-y-auto bg-white border rounded-md shadow-lg z-20">
-                            {schools
-                              .filter(school => 
-                                school.toLowerCase().includes(schoolSearch.toLowerCase())
-                              )
-                              .map(school => (
-                                <div
-                                  key={school}
-                                  className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                                    selectedSchool === school ? 'bg-red-50' : ''
-                                  }`}
-                                  onClick={() => {
-                                    setSelectedSchool(school);
-                                    setSchoolSearch("");
-                                  }}
-                                >
-                                  {school}
-                                </div>
-                              ))}
-                          </div>
-                        )}
+                        <input
+                          type="text"
+                          placeholder="Search for your school..."
+                          value={schoolSearch}
+                          onChange={(e) => setSchoolSearch(e.target.value)}
+                          className="w-full p-2 border rounded-md"
+                        />
+                        <div className="absolute w-full mt-1 max-h-48 overflow-y-auto bg-white border rounded-md shadow-lg z-20">
+                          {schools
+                            .filter(school => 
+                              school.toLowerCase().includes(schoolSearch.toLowerCase())
+                            )
+                            .map(school => (
+                              <div
+                                key={school}
+                                className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                  selectedSchool === school ? 'bg-red-50' : ''
+                                }`}
+                                onClick={() => {
+                                  setSelectedSchool(school);
+                                  setSchoolSearch("");
+                                }}
+                              >
+                                {school}
+                              </div>
+                            ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -687,6 +672,30 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
               <Button
                 onClick={() => {
                   if (isDealValid()) {
+                    const selectedItems = {
+                      ...selectedOptions,
+                      school: selectedSchool,
+                      details: [
+                        // Add pizzas
+                        ...selectedOptions.pizzas.map(pizzaId => {
+                          const pizza = menuItems.pizzas.find(p => p.id === pizzaId);
+                          return pizza?.name || '';
+                        }),
+                        // Add sides for family feast
+                        ...(deal.id === "family-feast" ? selectedOptions.sides.map(sideId => {
+                          const side = menuItems.sides.find(s => s.id === sideId);
+                          return side?.name || '';
+                        }) : []),
+                        // Add drinks
+                        ...selectedOptions.drinks.map(drinkId => {
+                          const drink = menuItems.drinks.find(d => d.id === drinkId);
+                          return drink?.name || '';
+                        }),
+                        // Only add lava cake for Christmas deal
+                        ...(deal.id === "christmas-special" ? ["Free Lava Cake"] : [])
+                      ]
+                    };
+
                     addToCart({
                       id: deal.id,
                       name: deal.title,
@@ -694,13 +703,7 @@ export function DealOrderModal({ isOpen, onClose, deal }: DealOrderModalProps) {
                       tax: calculateDealPrice().tax,
                       total: calculateDealPrice().total,
                       description: deal.description,
-                      selectedItems: {
-                        ...selectedOptions,
-                        details: selectedOptions.pizzas.map(pizzaId => {
-                          const pizza = menuItems.pizzas.find(p => p.id === pizzaId);
-                          return pizza?.name || '';
-                        })
-                      },
+                      selectedItems,
                       isDeal: true
                     });
                     onClose();

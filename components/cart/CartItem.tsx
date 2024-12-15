@@ -14,7 +14,6 @@ export function CartItem({ item }: { item: any }) {
                 {item.selectedItems.details.map((detail: string, index: number) => (
                   <li key={index}>{detail}</li>
                 ))}
-                <li>Hot Lava Chocolate Cake</li>
               </ul>
             </div>
           )}
