@@ -41,7 +41,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/mobile-icons/180.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/mobile-icons/152.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/mobile-icons/120.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/mobile-icons/76.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/mobile-icons/60.png" />
       </head>
       <body 
         className={`${oswald.className} overflow-x-hidden`}

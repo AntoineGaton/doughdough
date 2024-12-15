@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { loadStripe } from '@stripe/stripe-js';
 import toast from 'react-hot-toast';
 import { CartItem } from '@/hooks/useCart';
+import { GuestCheckoutModal } from '@/components/modals/GuestCheckoutModal';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -15,14 +16,19 @@ interface CheckoutButtonProps {
 
 export function CheckoutButton({ items, total }: CheckoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showGuestModal, setShowGuestModal] = useState(false);
   const { user } = useAuth();
 
   const handleCheckout = async () => {
     if (!user) {
-      toast.error("Please login to checkout");
+      setShowGuestModal(true);
       return;
     }
+    
+    proceedToCheckout();
+  };
 
+  const proceedToCheckout = async () => {
     try {
       setIsLoading(true);
       
@@ -43,8 +49,8 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
         },
         body: JSON.stringify({
           items: checkoutItems,
-          userId: user.uid,
-          customerEmail: user.email
+          userId: user?.uid || 'guest',
+          customerEmail: user?.email || 'guest@example.com'
         }),
       });
 
@@ -75,12 +81,27 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
   };
 
   return (
-    <button
-      onClick={handleCheckout}
-      disabled={isLoading}
-      className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 disabled:opacity-50"
-    >
-      {isLoading ? 'Processing...' : `Pay ${total.toFixed(2)} USD`}
-    </button>
+    <>
+      <button
+        onClick={handleCheckout}
+        className="w-full bg-secondary text-white py-3 rounded-md font-bold"
+        disabled={isLoading}
+      >
+        {isLoading ? "Processing..." : `Checkout $${total.toFixed(2)}`}
+      </button>
+
+      <GuestCheckoutModal 
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        onConfirmGuest={() => {
+          setShowGuestModal(false);
+          proceedToCheckout();
+        }}
+        onSignup={() => {
+          setShowGuestModal(false);
+          // Implement your signup logic here
+        }}
+      />
+    </>
   );
 } 
