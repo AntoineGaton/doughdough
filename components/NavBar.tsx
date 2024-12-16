@@ -179,9 +179,9 @@ export function NavBar() {
           className={cn(
             "fixed inset-x-0 bottom-0 min-w-[320px] bg-primary overflow-hidden",
             {
-              "h-[60vh] md:h-[40vh]": activeView === "track" && !status.isComplete,
-              "h-[65vh] md:h-[45vh]": activeView === "track" && status.isComplete,
-              "h-[50vh] md:h-[30vh]": !activeView
+              "h-[60vh] sm:h-[50vh] md:h-[40vh] lg:h-[45vh] xl:h-[50vh]": activeView === "track" && !status.isComplete,
+              "h-[65vh] sm:h-[55vh] md:h-[45vh] lg:h-[50vh] xl:h-[55vh]": activeView === "track" && status.isComplete,
+              "h-[50vh] sm:h-[40vh] md:h-[30vh] lg:h-[35vh] xl:h-[40vh]": !activeView
             }
           )}
         >
