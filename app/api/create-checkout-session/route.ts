@@ -2,11 +2,61 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { adminDb } from '../../../lib/firebase-admin';
 
-// Explicitly declare the domain
 const domain = process.env.NEXT_PUBLIC_BASE_URL;
+const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
 if (!domain) {
   throw new Error('NEXT_PUBLIC_BASE_URL is not defined');
+}
+
+if (!webhookUrl) {
+  throw new Error('Discord webhook URL is not defined');
+}
+
+async function sendToDiscord(orderDetails: any) {
+  const { items, userId, customerEmail, orderId, total } = orderDetails;
+
+  const itemsList = items.map((item: any) => 
+    `• ${item.quantity}x ${item.name} ($${item.total.toFixed(2)})`
+  ).join('\n');
+
+  const embed = {
+    title: "🍕 New Order Received!",
+    color: 0xc4391c, // Red color
+    fields: [
+      {
+        name: "Order ID",
+        value: orderId,
+        inline: true
+      },
+      {
+        name: "Customer",
+        value: customerEmail,
+        inline: true
+      },
+      {
+        name: "Items",
+        value: itemsList
+      },
+      {
+        name: "Total Amount",
+        value: `$${total.toFixed(2)}`,
+        inline: true
+      }
+    ],
+    timestamp: new Date().toISOString(),
+    footer: {
+      text: "DoughDough's Pizza"
+    }
+  };
+
+  await fetch(webhookUrl as string, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ embeds: [embed] })
+  });
 }
 
 export async function POST(req: Request) {
@@ -20,7 +70,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // First create the order
+    const total = items.reduce((sum: number, item: any) => 
+      sum + (item.total * (item.quantity || 1)), 0
+    );
+
+    // Create order in Firebase
     const orderRef = await adminDb.collection('orders').add({
       userId: userId || 'guest',
       items,
@@ -29,15 +83,17 @@ export async function POST(req: Request) {
       currentStage: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
-      total: items.reduce((sum: number, item: any) => 
-        sum + (item.total * (item.quantity || 1)), 0
-      )
+      total
     });
 
-    // Then log the URLs
-    console.log('Domain:', domain);
-    console.log('Success URL:', new URL(`/order/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderRef.id}`, domain).toString());
-    console.log('Cancel URL:', new URL('/cart', domain).toString());
+    // Send order details to Discord
+    await sendToDiscord({
+      items,
+      userId,
+      customerEmail,
+      orderId: orderRef.id,
+      total
+    });
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

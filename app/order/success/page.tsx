@@ -89,7 +89,7 @@ export default function OrderSuccessPage() {
             </button>
             <Link 
               href="/"
-              className="text-sm text-muted-foreground hover:text-primary"
+              className="text-sm text-muted-foreground hover:text-secondary"
             >
               Return back to home
             </Link>
