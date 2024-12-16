@@ -14,15 +14,15 @@ if (!webhookUrl) {
 }
 
 async function sendToDiscord(orderDetails: any) {
-  const { items, userId, customerEmail, orderId, total } = orderDetails;
+  const { items, userId, customerEmail, orderId, total, deliveryMethod, orderDetails: details } = orderDetails;
 
   const itemsList = items.map((item: any) => 
     `• ${item.quantity}x ${item.name} ($${item.total.toFixed(2)})`
   ).join('\n');
 
   const embed = {
-    title: "🍕 New Order Received!",
-    color: 0xc4391c, // Red color
+    title: `🍕 New ${deliveryMethod === 'delivery' ? '🚗 Delivery' : '🏪 Pickup'} Order!`,
+    color: 0xc4391c,
     fields: [
       {
         name: "Order ID",
@@ -31,9 +31,19 @@ async function sendToDiscord(orderDetails: any) {
       },
       {
         name: "Customer",
-        value: customerEmail,
+        value: `${details.name}\n${details.phone}`,
         inline: true
       },
+      {
+        name: "Order Type",
+        value: deliveryMethod === 'delivery' ? '���� Delivery' : '🏪 Pickup',
+        inline: true
+      },
+      ...(deliveryMethod === 'delivery' ? [{
+        name: "Delivery Address",
+        value: details.address,
+        inline: false
+      }] : []),
       {
         name: "Items",
         value: itemsList
@@ -61,7 +71,7 @@ async function sendToDiscord(orderDetails: any) {
 
 export async function POST(req: Request) {
   try {
-    const { items, userId, customerEmail } = await req.json();
+    const { items, userId, customerEmail, deliveryMethod, orderDetails } = await req.json();
     
     if (!items?.length) {
       return NextResponse.json(
@@ -83,7 +93,9 @@ export async function POST(req: Request) {
       currentStage: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
-      total
+      total,
+      deliveryMethod,
+      customerDetails: orderDetails // Save customer details
     });
 
     // Send order details to Discord
@@ -92,7 +104,9 @@ export async function POST(req: Request) {
       userId,
       customerEmail,
       orderId: orderRef.id,
-      total
+      total,
+      deliveryMethod,
+      orderDetails
     });
 
     const session = await stripe.checkout.sessions.create({

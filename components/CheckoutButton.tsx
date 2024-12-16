@@ -6,6 +6,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import toast from 'react-hot-toast';
 import { CartItem } from '@/hooks/useCart';
 import { GuestCheckoutModal } from '@/components/modals/GuestCheckoutModal';
+import { useCart } from '@/hooks/useCart';
+import { OrderDetails, OrderDetailsModal } from '@/components/modals/OrderDetailsModal';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -17,18 +19,19 @@ interface CheckoutButtonProps {
 export function CheckoutButton({ items, total }: CheckoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showGuestModal, setShowGuestModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const { user } = useAuth();
+  const { deliveryMethod } = useCart();
 
   const handleCheckout = async () => {
     if (!user) {
       setShowGuestModal(true);
       return;
     }
-    
-    proceedToCheckout();
+    setShowDetailsModal(true);
   };
 
-  const proceedToCheckout = async () => {
+  const proceedToCheckout = async (orderDetails: OrderDetails) => {
     try {
       setIsLoading(true);
       
@@ -50,7 +53,13 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
         body: JSON.stringify({
           items: checkoutItems,
           userId: user?.uid || 'guest',
-          customerEmail: user?.email || 'guest@example.com'
+          customerEmail: user?.email || 'guest@example.com',
+          deliveryMethod,
+          orderDetails: {
+            name: orderDetails.name,
+            phone: orderDetails.phone,
+            address: orderDetails.address || ''
+          }
         }),
       });
 
@@ -95,11 +104,17 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
         onClose={() => setShowGuestModal(false)}
         onConfirmGuest={() => {
           setShowGuestModal(false);
-          proceedToCheckout();
+          setShowDetailsModal(true);
         }}
         onSignup={() => {
           setShowGuestModal(false);
         }}
+      />
+
+      <OrderDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        onSubmit={proceedToCheckout}
       />
     </>
   );

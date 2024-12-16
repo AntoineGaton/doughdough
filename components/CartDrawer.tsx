@@ -15,12 +15,12 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, itemCount } = useCart();
+  const { items, itemCount, deliveryMethod, setDeliveryMethod } = useCart();
   const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
 
   const handleFillCartClick = () => {
-    onClose(); // Close cart drawer
-    setIsMenuModalOpen(true); // Open menu modal
+    onClose();
+    setIsMenuModalOpen(true);
   };
 
   return (
@@ -84,6 +84,33 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   ))}
 
                   <div className="mt-4">
+                    <div className="flex justify-center mb-4">
+                      <div className="inline-flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+                        <button
+                          onClick={() => setDeliveryMethod('pickup')}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                            deliveryMethod === 'pickup' 
+                              ? 'bg-white shadow-sm text-gray-900' 
+                              : 'text-gray-600 hover:bg-white/50'
+                          }`}
+                        >
+                          <span role="img" aria-label="pickup">🏪</span>
+                          Pickup
+                        </button>
+                        <button
+                          onClick={() => setDeliveryMethod('delivery')}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                            deliveryMethod === 'delivery' 
+                              ? 'bg-secondary text-white' 
+                              : 'text-gray-600 hover:bg-white/50'
+                          }`}
+                        >
+                          <span role="img" aria-label="delivery">🚗</span>
+                          Delivery
+                        </button>
+                      </div>
+                    </div>
+                    <div className="border-t border-gray-200 mt-4"></div>
                     <CartSummary />
                     <div className="mt-4">
                       <CheckoutButton 

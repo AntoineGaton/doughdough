@@ -9,6 +9,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 interface CartState {
   items: CartItem[];
   itemCount: number;
+  deliveryMethod: 'pickup' | 'delivery';
+  setDeliveryMethod: (method: 'pickup' | 'delivery') => void;
   addToCart: (item: CartItem) => void;
   removeFromCart: (itemId: string) => void;
   removeItem: (itemId: string) => void;
@@ -47,6 +49,8 @@ export const useCart = create<CartState>()(
       return {
         items: [],
         itemCount: 0,
+        deliveryMethod: 'pickup' as 'pickup' | 'delivery',
+        setDeliveryMethod: (method: 'pickup' | 'delivery') => set({ deliveryMethod: method }),
         addToCart: (item) =>
           set((state) => {
             const basePrice = Number(item.price) || 0;
