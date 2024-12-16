@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultView?: "signin" | "signup";
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {

@@ -1,8 +1,11 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from '@/contexts/AuthContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -18,11 +21,37 @@ export type OrderDetails = {
 
 export function OrderDetailsModal({ isOpen, onClose, onSubmit }: OrderDetailsModalProps) {
   const { deliveryMethod } = useCart();
+  const { user } = useAuth();
   const [details, setDetails] = useState<OrderDetails>({
     name: '',
     phone: '',
     address: ''
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, 'userProfiles', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const profileData = docSnap.data();
+            setDetails({
+              name: profileData.displayName || user.displayName || '',
+              phone: profileData.phoneNumber || '',
+              address: profileData.address || ''
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+        }
+      }
+    };
+    
+    if (isOpen) {
+      fetchProfile();
+    }
+  }, [user, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
