@@ -103,7 +103,8 @@ export async function POST(req: Request) {
           currency: 'usd',
           product_data: {
             name: item.name,
-            images: item.image?.startsWith('http') ? [item.image] : [],
+            images: item.image?.startsWith('http') ? [item.image] : 
+                   item.id === 'custom-pizza' ? [`https://firebasestorage.googleapis.com/v0/b/doughdough-cc6c5.firebasestorage.app/o/pizzas%2Fcustom.jpg?alt=media&token=09bfd7e4-d92a-41ec-8f2a-0f27e6e38769`] : [],
           },
           unit_amount: Math.round(item.total * 100),
         },

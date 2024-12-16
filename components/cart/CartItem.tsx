@@ -1,7 +1,27 @@
 import { useCart } from "@/hooks/useCart";
+import { ingredients } from "@/data/ingredients";
 
 export function CartItem({ item }: { item: any }) {
   const { removeFromCart } = useCart();
+
+  const renderCustomPizzaDetails = () => {
+    if (item.id === 'custom-pizza' && item.selectedIngredients) {
+      const selectedIngredientNames = item.selectedIngredients
+        .map((id: string) => ingredients[id]?.name)
+        .filter(Boolean);
+
+      return (
+        <div className="text-sm text-gray-600 ml-4">
+          <ul className="list-disc">
+            {selectedIngredientNames.map((name: string, index: number) => (
+              <li key={index}>{name}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="py-4 border-b">
@@ -17,6 +37,7 @@ export function CartItem({ item }: { item: any }) {
               </ul>
             </div>
           )}
+          {renderCustomPizzaDetails()}
           <div className="text-sm text-gray-500">
             Quantity: {item.quantity || 1}
           </div>

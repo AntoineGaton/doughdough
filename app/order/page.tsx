@@ -1,7 +1,7 @@
 "use client";
 
-import { useOrderTracking } from '@/hooks/useOrderTracking';
-import PizzaTracker from '@/components/PizzaTracker';
+import { useOrderTracking } from '../../hooks/useOrderTracking';
+import PizzaTracker from '../../components/PizzaTracker';
 import Image from 'next/image';
 import Link from 'next/link';
 

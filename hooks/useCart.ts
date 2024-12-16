@@ -23,6 +23,7 @@ export type CartItem = {
   total: number;
   description: string;
   image?: string;
+  selectedIngredients?: string[];
   selectedItems?: {
     pizzas: string[];
     sides: string[];

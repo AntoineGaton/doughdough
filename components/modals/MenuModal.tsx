@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Drink } from "../../data/drinks";
 import { Side } from "../../data/sides";
+import { CustomPizzaBuilder } from '@/components/CustomPizzaBuilder';
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -94,8 +95,9 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
           <DialogTitle className="text-2xl font-bold">Our Menu</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="pizzas" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pizzas">Pizzas</TabsTrigger>
+            <TabsTrigger value="custom">Build Your Own</TabsTrigger>
             <TabsTrigger value="sides">Sides</TabsTrigger>
             <TabsTrigger value="drinks">Drinks</TabsTrigger>
           </TabsList>
@@ -154,6 +156,9 @@ export function MenuModal({ isOpen, onClose }: MenuModalProps) {
                 ))}
               </div>
             )}
+          </TabsContent>
+          <TabsContent value="custom">
+            <CustomPizzaBuilder />
           </TabsContent>
           <TabsContent value="sides">
             {loading.sides ? (

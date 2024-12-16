@@ -13,10 +13,16 @@ export type Ingredient = {
 // - The values must all be Ingredient objects with id, name, price, etc
 export const ingredients: Record<string, Ingredient> = {
   // Bases
+  regularCrust: {
+    id: 'regular-crust',
+    name: 'Regular Crust',
+    price: 11.99,
+    category: 'base',
+  },
   thinCrust: {
     id: 'thin-crust',
     name: 'Thin Crust',
-    price: 11.99,
+    price: 10.99,
     category: 'base',
   },
   thickCrust: {
@@ -30,7 +36,7 @@ export const ingredients: Record<string, Ingredient> = {
   tomatoSauce: {
     id: 'tomato-sauce',
     name: 'Tomato Sauce',
-    price: 0.99,
+    price: 0.00,
     category: 'sauce',
   },
   bbqSauce: {
@@ -39,17 +45,53 @@ export const ingredients: Record<string, Ingredient> = {
     price: 1.49,
     category: 'sauce',
   },
+  alfredoSauce: {
+    id: 'alfredo-sauce',
+    name: 'Alfredo Sauce',
+    price: 1.99,
+    category: 'sauce',
+  },
+  pestoSauce: {
+    id: 'pesto-sauce',
+    name: 'Pesto Sauce',
+    price: 1.99,
+    category: 'sauce',
+  },
   
   // Cheeses
   mozzarella: {
     id: 'mozzarella',
     name: 'Mozzarella',
-    price: 1.99,
+    price: 0.00,
     category: 'cheese',
   },
   feta: {
     id: 'feta',
     name: 'Feta',
+    price: 2.49,
+    category: 'cheese',
+  },
+  parmesan: {
+    id: 'parmesan',
+    name: 'Parmesan',
+    price: 2.49,
+    category: 'cheese',
+  },
+  gorgonzola: {
+    id: 'gorgonzola',
+    name: 'Gorgonzola',
+    price: 2.99,
+    category: 'cheese',
+  },
+  ricotta: {
+    id: 'ricotta',
+    name: 'Ricotta',
+    price: 2.49,
+    category: 'cheese',
+  },
+  provolone: {
+    id: 'provolone',
+    name: 'Provolone',
     price: 2.49,
     category: 'cheese',
   },
@@ -67,6 +109,36 @@ export const ingredients: Record<string, Ingredient> = {
     price: 2.99,
     category: 'meat',
   },
+  italianSausage: {
+    id: 'italian-sausage',
+    name: 'Italian Sausage',
+    price: 2.99,
+    category: 'meat',
+  },
+  bacon: {
+    id: 'bacon',
+    name: 'Bacon',
+    price: 2.49,
+    category: 'meat',
+  },
+  ham: {
+    id: 'ham',
+    name: 'Ham',
+    price: 2.49,
+    category: 'meat',
+  },
+  anchovies: {
+    id: 'anchovies',
+    name: 'Anchovies',
+    price: 2.99,
+    category: 'meat',
+  },
+  prosciutto: {
+    id: 'prosciutto',
+    name: 'Prosciutto',
+    price: 3.49,
+    category: 'meat',
+  },
   
   // Vegetables
   mushrooms: {
@@ -79,6 +151,54 @@ export const ingredients: Record<string, Ingredient> = {
     id: 'onions',
     name: 'Onions',
     price: 0.99,
+    category: 'vegetable',
+  },
+  bellPeppers: {
+    id: 'bell-peppers',
+    name: 'Bell Peppers',
+    price: 1.49,
+    category: 'vegetable',
+  },
+  olives: {
+    id: 'olives',
+    name: 'Black Olives',
+    price: 1.49,
+    category: 'vegetable',
+  },
+  spinach: {
+    id: 'spinach',
+    name: 'Fresh Spinach',
+    price: 1.49,
+    category: 'vegetable',
+  },
+  tomatoes: {
+    id: 'tomatoes',
+    name: 'Fresh Tomatoes',
+    price: 1.49,
+    category: 'vegetable',
+  },
+  jalapenos: {
+    id: 'jalapenos',
+    name: 'Jalapeños',
+    price: 1.49,
+    category: 'vegetable',
+  },
+  pineapple: {
+    id: 'pineapple',
+    name: 'Pineapple',
+    price: 1.99,
+    category: 'vegetable',
+  },
+  artichokes: {
+    id: 'artichokes',
+    name: 'Artichokes',
+    price: 2.49,
+    category: 'vegetable',
+  },
+  roastedGarlic: {
+    id: 'roasted-garlic',
+    name: 'Roasted Garlic',
+    price: 1.49,
     category: 'vegetable',
   }
 }; 
