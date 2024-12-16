@@ -1,3 +1,27 @@
+/**
+ * @fileoverview Checkout button component that handles the checkout process
+ * 
+ * Dependencies:
+ * - @stripe/stripe-js: Stripe payment processing
+ * - @/contexts/AuthContext: Authentication context
+ * - @/hooks/useCart: Cart management
+ * - @/components/modals/GuestCheckoutModal: Guest checkout flow
+ * - @/components/modals/OrderDetailsModal: Order details collection
+ * 
+ * Upstream:
+ * - Used by components/CartDrawer.tsx
+ * 
+ * Downstream:
+ * - Calls /api/create-checkout-session API endpoint
+ * - Integrates with Stripe checkout
+ * 
+ * Features:
+ * - Handles both guest and authenticated checkouts
+ * - Collects delivery/pickup details
+ * - Initiates Stripe payment flow
+ * - Shows loading states during processing
+ */
+
 "use client";
 
 import { useState } from 'react';

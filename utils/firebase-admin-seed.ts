@@ -1,3 +1,33 @@
+/**
+ * @fileoverview Firebase Admin utility for seeding the database with initial data
+ * 
+ * Dependencies:
+ * - firebase-admin: Firebase Admin SDK
+ * - @/data/pizzas: Pizza menu data
+ * - @/data/ingredients: Ingredient data
+ * - @/data/deals: Deals data
+ * - @/data/drinks: Drinks data
+ * - @/data/sides: Sides data
+ * 
+ * Environment Variables Required:
+ * - FIREBASE_TYPE
+ * - FIREBASE_PROJECT_ID
+ * - FIREBASE_PRIVATE_KEY_ID
+ * - FIREBASE_PRIVATE_KEY
+ * - FIREBASE_CLIENT_EMAIL
+ * - FIREBASE_CLIENT_ID
+ * - FIREBASE_AUTH_URI
+ * - FIREBASE_TOKEN_URI
+ * - FIREBASE_AUTH_PROVIDER_X509_CERT_URL
+ * - FIREBASE_CLIENT_X509_CERT_URL
+ * 
+ * Features:
+ * - Initializes Firebase Admin SDK
+ * - Seeds database with initial data
+ * - Handles image URL generation
+ * - Manages data versioning
+ */
+
 import * as admin from 'firebase-admin';
 import { pizzas } from '@/data/pizzas';
 import { ingredients } from '@/data/ingredients';
@@ -6,7 +36,9 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { drinks } from '../data/drinks';
 import { sides } from '../data/sides'
 
-// Instead of importing JSON file
+/**
+ * Firebase Admin configuration using environment variables
+ */
 const serviceAccount = {
   type: process.env.FIREBASE_TYPE,
   project_id: process.env.FIREBASE_PROJECT_ID,
@@ -20,6 +52,9 @@ const serviceAccount = {
   client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
 };
 
+/**
+ * Initialize Firebase Admin SDK if not already initialized
+ */
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
@@ -35,6 +70,11 @@ export default admin;
 const db = admin.firestore();
 const storage = admin.storage();
 
+/**
+ * Retrieves the signed URL for a pizza image from Firebase Storage
+ * @param pizzaName - Name of the pizza to get image for
+ * @returns Promise<string> - Signed URL for the pizza image
+ */
 async function getPizzaImageUrl(pizzaName: string): Promise<string> {
   try {
     const bucket = storage.bucket('doughdough-cc6c5.firebasestorage.app');
@@ -82,6 +122,11 @@ async function getPizzaImageUrl(pizzaName: string): Promise<string> {
   }
 }
 
+/**
+ * Retrieves the signed URL for a drink image from Firebase Storage
+ * @param drinkPath - Path to the drink image
+ * @returns Promise<string> - Signed URL for the drink image
+ */
 async function getDrinkImageUrl(drinkPath: string): Promise<string> {
   try {
     const bucket = storage.bucket('doughdough-cc6c5.firebasestorage.app');
@@ -110,6 +155,11 @@ async function getDrinkImageUrl(drinkPath: string): Promise<string> {
   }
 }
 
+/**
+ * Retrieves the signed URL for a side item image from Firebase Storage
+ * @param sidePath - Path to the side item image
+ * @returns Promise<string> - Signed URL for the side item image
+ */
 async function getSideImageUrl(sidePath: string): Promise<string> {
   try {
     const bucket = storage.bucket('doughdough-cc6c5.firebasestorage.app');
@@ -138,6 +188,10 @@ async function getSideImageUrl(sidePath: string): Promise<string> {
   }
 }
 
+/**
+ * Seeds the database with initial pizza data
+ * Clears existing data and adds new data with image URLs
+ */
 async function seedDatabase() {
   try {
     console.log('Starting database seed...');
@@ -167,6 +221,10 @@ async function seedDatabase() {
   }
 }
 
+/**
+ * Seeds the database with drink data
+ * Clears existing data and adds new data with image URLs
+ */
 async function uploadDrinksToFirestore() {
   try {
     // Clear existing drinks
@@ -194,6 +252,10 @@ async function uploadDrinksToFirestore() {
   }
 }
 
+/**
+ * Seeds the database with side items data
+ * Clears existing data and adds new data with image URLs
+ */
 async function uploadSidesToFirestore() {
   try {
     // Clear existing sides

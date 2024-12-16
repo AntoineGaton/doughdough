@@ -1,9 +1,39 @@
+/**
+ * @fileoverview Component for rendering individual items in the shopping cart
+ * 
+ * Dependencies:
+ * - @/hooks/useCart: Cart management hook
+ * - @/data/ingredients: Ingredient data for custom pizzas
+ * 
+ * Upstream:
+ * - Used by components/CartDrawer.tsx
+ * 
+ * Features:
+ * - Displays item name, quantity, and price
+ * - Shows custom pizza ingredients if applicable
+ * - Shows deal items if part of a deal
+ * - Handles item removal from cart
+ * - Calculates and displays tax and total
+ */
+
 import { useCart } from "@/hooks/useCart";
 import { ingredients } from "@/data/ingredients";
 
-export function CartItem({ item }: { item: any }) {
+interface CartItemProps {
+  item: any; // TODO: Type this properly with CartItem type
+}
+
+/**
+ * CartItem component displays individual items in the cart
+ * with their details, prices, and removal option
+ */
+export function CartItem({ item }: CartItemProps) {
   const { removeFromCart } = useCart();
 
+  /**
+   * Renders the list of ingredients for custom pizzas
+   * @returns JSX element with ingredient list or null
+   */
   const renderCustomPizzaDetails = () => {
     if (item.id === 'custom-pizza' && item.selectedIngredients) {
       const selectedIngredientNames = item.selectedIngredients

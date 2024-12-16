@@ -1,3 +1,22 @@
+/**
+ * @fileoverview Pizza menu data and type definitions
+ * 
+ * Dependencies:
+ * - @/utils/images: Image loading utilities
+ * 
+ * Upstream:
+ * - Used by components/menu/PizzaCard.tsx
+ * - Used by components/menu/PizzaGrid.tsx
+ * - Used by utils/firebase-admin-seed.ts for database seeding
+ * 
+ * Features:
+ * - Defines Pizza interface
+ * - Provides complete pizza menu data
+ * - Handles pizza image initialization
+ * - Tracks popular pizzas
+ * - Supports custom pizza creation
+ */
+
 import { getPizzaImage } from '@/utils/images';
 
 let initializedPizzas: Pizza[] | null = null;

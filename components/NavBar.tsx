@@ -1,3 +1,36 @@
+/**
+ * @fileoverview Main navigation component with responsive design and mobile menu
+ * 
+ * Dependencies:
+ * - next/navigation: Next.js navigation utilities
+ * - framer-motion: Animation library
+ * - lucide-react: Icon components
+ * - @/hooks/useCart: Cart management
+ * - @/hooks/useOrderTracking: Order tracking state
+ * - @/hooks/useTrackingDrawer: Tracking drawer state
+ * - @/contexts/AuthContext: Authentication context
+ * 
+ * Upstream:
+ * - Used by app/layout.tsx
+ * 
+ * Downstream:
+ * - Uses CartDrawer.tsx
+ * - Uses PizzaTracker.tsx
+ * - Uses MobilePizzaTracker.tsx
+ * - Uses AuthModal.tsx
+ * - Uses DealsModal.tsx
+ * - Uses MenuModal.tsx
+ * - Uses ContactModal.tsx
+ * 
+ * Features:
+ * - Responsive navigation with mobile menu
+ * - Shopping cart integration
+ * - User authentication status
+ * - Order tracking
+ * - Dynamic modals (Deals, Menu, Contact)
+ * - Admin mode with RGB animation
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";

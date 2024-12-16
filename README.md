@@ -1,3 +1,17 @@
+<!--
+ * @fileoverview Project documentation and setup instructions
+ * 
+ * Features:
+ * - Project overview and description
+ * - Tech stack details
+ * - Development progress tracking
+ * - Project structure documentation
+ * - Design system specifications
+ * - Setup and installation guide
+ * - Development timeline and sprints
+ * - Future roadmap
+ -->
+
 # DoughDoughs Pizza - Online Ordering Platform
 
 A modern, responsive pizza ordering website built with Next.js 13, TypeScript, and Tailwind CSS.
@@ -193,7 +207,7 @@ doughdoughs-pizza/
 │ ├── modals/        # Modal components
 │ └── ui/            # Reusable UI components
 ├── hooks/
-│ ├── useCart.ts     # Cart state management
+│ ��── useCart.ts     # Cart state management
 │ ├── useToast.ts    # Toast notifications
 │ └── useOrderTracking.ts # Order tracking state
 ├── data/

@@ -1,4 +1,16 @@
 {
+  /**
+   * @fileoverview TypeScript configuration for Next.js project
+   * 
+   * Features:
+   * - ES5 target for broad browser compatibility
+   * - Next.js specific configuration
+   * - Path aliases for cleaner imports
+   * - Strict type checking enabled
+   * - Module resolution for bundler
+   * - Support for JSON imports
+   * - Incremental builds enabled
+   */
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

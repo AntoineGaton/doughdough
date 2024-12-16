@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Cart management hook using Zustand for state management
+ * 
+ * Dependencies:
+ * - zustand: State management
+ * - @/data/pizzas: Pizza type definitions
+ * - @/data/drinks: Drink type definitions
+ * - @/data/sides: Side type definitions
+ * - @/lib/firebase: Firebase authentication
+ * 
+ * Upstream:
+ * - Used by components/cart/CartItem.tsx
+ * - Used by components/CheckoutButton.tsx
+ * - Used by components/NavBar.tsx
+ * 
+ * Downstream:
+ * - Persists to localStorage via zustand/middleware/persist
+ * - Interacts with Firebase Authentication
+ */
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Pizza } from '@/data/pizzas';
@@ -6,6 +26,9 @@ import { Side } from '@/data/sides';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
+/**
+ * Interface defining the cart's state and methods
+ */
 interface CartState {
   items: CartItem[];
   itemCount: number;
@@ -17,6 +40,10 @@ interface CartState {
   clearCart: () => void;
 }
 
+/**
+ * Type definition for items that can be added to cart
+ * Includes pizzas, drinks, sides, and deals
+ */
 export type CartItem = {
   id: string;
   name: string;
@@ -36,10 +63,19 @@ export type CartItem = {
   quantity?: number;
 };
 
+/**
+ * Custom hook for cart management using Zustand
+ * Handles cart state, persistence, and authentication sync
+ * 
+ * @returns CartState object with cart data and methods
+ */
 export const useCart = create<CartState>()(
   persist(
     (set) => {
-      // Subscribe to auth state changes
+      /**
+       * Subscribe to authentication state changes
+       * Clears cart when user logs out
+       */
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           set({ items: [], itemCount: 0 });
@@ -50,7 +86,17 @@ export const useCart = create<CartState>()(
         items: [],
         itemCount: 0,
         deliveryMethod: 'pickup' as 'pickup' | 'delivery',
+        
+        /**
+         * Sets the delivery method for the order
+         * @param method - 'pickup' or 'delivery'
+         */
         setDeliveryMethod: (method: 'pickup' | 'delivery') => set({ deliveryMethod: method }),
+        
+        /**
+         * Adds an item to the cart with tax calculation
+         * @param item - The item to add
+         */
         addToCart: (item) =>
           set((state) => {
             const basePrice = Number(item.price) || 0;
@@ -79,6 +125,11 @@ export const useCart = create<CartState>()(
               itemCount: state.itemCount + 1,
             };
           }),
+        
+        /**
+         * Removes a single quantity of an item
+         * @param itemId - ID of the item to remove
+         */
         removeItem: (itemId) =>
           set((state) => {
             const item = state.items.find((i) => i.id === itemId);
@@ -95,7 +146,16 @@ export const useCart = create<CartState>()(
               itemCount: state.itemCount - 1,
             };
           }),
+        
+        /**
+         * Clears all items from the cart
+         */
         clearCart: () => set({ items: [], itemCount: 0 }),
+        
+        /**
+         * Removes all quantities of an item from the cart
+         * @param itemId - ID of the item to remove
+         */
         removeFromCart: (itemId) => 
           set((state) => ({
             items: state.items.filter(i => i.id !== itemId),
