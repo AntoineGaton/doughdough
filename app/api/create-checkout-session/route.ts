@@ -1,32 +1,14 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 
-const domain = process.env.NEXT_PUBLIC_BASE_URL;
+const domain = process.env.NEXT_PUBLIC_BASE_URL || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-
-if (!domain) {
-  throw new Error('NEXT_PUBLIC_BASE_URL is not defined');
-}
 
 if (!webhookUrl) {
   throw new Error('Discord webhook URL is not defined');
 }
-
-const serviceAccount = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
-};
-
-if (!getApps().length) {
-  initializeApp({
-    credential: cert(serviceAccount)
-  });
-}
-
-export const adminDb = getFirestore();
 
 async function sendToDiscord(orderDetails: any) {
   const { items, userId, customerEmail, orderId, total, deliveryMethod, orderDetails: details } = orderDetails;
@@ -76,9 +58,6 @@ async function sendToDiscord(orderDetails: any) {
   };
 
   try {
-    console.log('Webhook URL:', webhookUrl);
-    console.log('Request body:', JSON.stringify({ embeds: [embed] }, null, 2));
-
     const response = await fetch(webhookUrl as string, {
       method: 'POST',
       headers: {
@@ -87,11 +66,8 @@ async function sendToDiscord(orderDetails: any) {
       body: JSON.stringify({ embeds: [embed] })
     });
     
-    const responseText = await response.text();
-    console.log('Raw response:', responseText);
-    
     if (!response.ok) {
-      throw new Error(`Webhook failed: ${response.status} ${responseText}`);
+      throw new Error(`Webhook failed: ${response.status}`);
     }
   } catch (error) {
     console.error('Webhook failed:', error);
@@ -122,7 +98,7 @@ export async function POST(req: Request) {
         sum + (item.total * (item.quantity || 1)), 0
       ),
       deliveryMethod,
-      customerDetails: orderDetails // Add customer details to order
+      customerDetails: orderDetails
     });
 
     // Create Stripe session
