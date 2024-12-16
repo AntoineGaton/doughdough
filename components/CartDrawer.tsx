@@ -62,7 +62,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <div className="text-center">
                   <div className="flex justify-center mb-1">
                     <Image
-                      src="/images/logo2.png"
+                      src="/images/Doughdough/3.png"
                       alt="Pizza Logo"
                       width={300}
                       height={300}
