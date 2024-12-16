@@ -58,7 +58,10 @@ export function CheckoutButton({ items, total }: CheckoutButtonProps) {
           orderDetails: {
             name: orderDetails.name,
             phone: orderDetails.phone,
-            address: orderDetails.address || ''
+            address: orderDetails.address || '',
+            city: orderDetails.city || '',
+            state: orderDetails.state || '',
+            zipCode: orderDetails.zipCode || ''
           }
         }),
       });

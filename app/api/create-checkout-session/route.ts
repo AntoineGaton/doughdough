@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { adminDb } from '@/lib/firebase-admin';
+import { formatPhoneNumber } from '@/lib/utils';
 
 const domain = process.env.NEXT_PUBLIC_BASE_URL || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
@@ -17,6 +18,10 @@ async function sendToDiscord(orderDetails: any) {
     `• ${item.quantity}x ${item.name} ($${item.total.toFixed(2)})`
   ).join('\n');
 
+  const fullAddress = deliveryMethod === 'delivery' 
+    ? `${details.address}\n${details.city}, ${details.state} ${details.zipCode}`
+    : 'Pickup Order';
+
   const embed = {
     title: `🍕 New ${deliveryMethod === 'delivery' ? '🚗' : '🏪'} Order!`,
     color: 0xc4391c,
@@ -28,7 +33,7 @@ async function sendToDiscord(orderDetails: any) {
       },
       {
         name: "Customer",
-        value: `${details.name}\n${details.phone}`,
+        value: `${details.name}\n${formatPhoneNumber(details.phone)}`,
         inline: true
       },
       {
@@ -38,12 +43,13 @@ async function sendToDiscord(orderDetails: any) {
       },
       ...(deliveryMethod === 'delivery' ? [{
         name: "Delivery Address",
-        value: details.address,
+        value: fullAddress,
         inline: false
       }] : []),
       {
         name: "Items",
-        value: itemsList
+        value: itemsList,
+        inline: false
       },
       {
         name: "Total Amount",
@@ -98,7 +104,27 @@ export async function POST(req: Request) {
         sum + (item.total * (item.quantity || 1)), 0
       ),
       deliveryMethod,
-      customerDetails: orderDetails
+      customerDetails: {
+        name: orderDetails.name,
+        phone: orderDetails.phone,
+        address: orderDetails.address || '',
+        city: orderDetails.city || '',
+        state: orderDetails.state || '',
+        zipCode: orderDetails.zipCode || ''
+      }
+    });
+
+    // Add this right after orderRef is created
+    await sendToDiscord({
+      items,
+      userId,
+      customerEmail,
+      orderId: orderRef.id,
+      total: items.reduce((sum: number, item: any) => 
+        sum + (item.total * (item.quantity || 1)), 0
+      ),
+      deliveryMethod,
+      orderDetails
     });
 
     // Create Stripe session
