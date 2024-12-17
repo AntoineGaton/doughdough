@@ -38,7 +38,7 @@ export function GuestCheckoutModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl font-bold text-secondary">
               Join the DoughDough Family?
@@ -49,23 +49,23 @@ export function GuestCheckoutModal({
             <Image
               src="/images/Doughdough/3.png"
               alt="DoughDough's Logo"
-              width={250}
-              height={250}
+              width={200}
+              height={200}
               className="full"
             />
             
-            <div className="space-y-2 w-full">
+            <div className="space-y-1 w-full">
               {benefits.map((benefit, index) => (
                 <div 
                   key={index}
-                  className="flex items-center space-x-2 p-2 bg-background rounded-lg"
+                  className="flex items-center space-x-2 p-1.5 bg-background rounded-lg"
                 >
-                  <span>{benefit}</span>
+                  <span className="text-sm">{benefit}</span>
                 </div>
               ))}
             </div>
 
-            <div className="flex flex-col w-full gap-3 pt-4">
+            <div className="flex flex-col w-full gap-2 pt-2">
               <Button
                 onClick={handleSignupClick}
                 variant="outline"
