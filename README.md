@@ -105,7 +105,7 @@ Total: 20 hours
 - State Management: 6 hours
 Total: 36 hours
 
-### Sprint 2 - Week 3 (Current)
+### Sprint 2 - Week 3 (Complete)
 
 #### Latest Features
 
@@ -136,7 +136,7 @@ Total: 36 hours
 - Firebase Integration: 8 hours
 Total: 40 hours
 
-### Sprint 2 - Week 4 (Current)
+### Sprint 2 - Week 4 (Complete)
 
 #### Week 4 Latest Features
 
