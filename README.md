@@ -18,7 +18,7 @@ A modern, responsive pizza ordering website built with Next.js 13, TypeScript, a
 
 ## 🍕 Quick Links
 
-- 🌐 **Live Site**: [DoughDough App](https://doughdough-antoinegaton-code-monkey-studios.vercel.app/?_vercel_share=IX498wxRPuoRktP3GCz7ntVNInsHRTeL)
+- 🌐 **Live Site**: [DoughDough App](https://doughdough-pizza.vercel.app/)
 - 📁 **GitHub Repository**: [github.com/AntoineGaton/doughdough](https://github.com/AntoineGaton/doughdough)
 
 ## 🛠️ Tech Stack
